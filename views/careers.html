@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Build the future of healthy food delivery. Explore career opportunities at Omnifood.">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://unpkg.com/ionicons@2.0.1/css/ionicons.min.css" rel="stylesheet">
+    <title>Careers - Omnifood</title>
+    <style>
+        .static-hero {
+            background: linear-gradient(135deg, #fdfbfa 0%, #fff7f7 100%);
+            padding: 140px 0 60px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .static-hero h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+        }
+        .static-content-box {
+            background: var(--bg-white);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: var(--shadow-sm);
+            margin: -40px auto 80px;
+            max-width: 800px;
+            position: relative;
+            z-index: 10;
+        }
+        .static-content-box p {
+            margin-bottom: 20px;
+            line-height: 1.8;
+            font-size: 1rem;
+            color: var(--text-medium);
+        }
+        .static-content-box h3 {
+            margin-top: 35px;
+            margin-bottom: 15px;
+            color: var(--text-dark);
+            font-family: 'Outfit', sans-serif;
+        }
+        .job-card {
+            background: var(--bg-light);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .job-title {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+        .job-dept {
+            font-size: 0.8rem;
+            color: var(--primary-color);
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        @media only screen and (max-width: 768px) {
+            .static-hero h1 {
+                font-size: 2.2rem;
+            }
+            .static-content-box {
+                padding: 25px;
+                margin: -20px 15px 60px;
+            }
+            .job-card {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="scrolled">
+        <div class="row">
+            <a href="/">
+                <img src="/static/img/logo.png" alt="Omnifood Logo" class="logo">
+            </a>
+            <button class="mobile-nav-toggle" id="mobileNavToggleBtn" aria-label="Toggle navigation Menu">
+                <i class="ion-android-menu" id="toggleIcon"></i>
+            </button>
+            <ul class="main-nav" id="mainNavLinks">
+                <li><a href="/#food-delivery">Food delivery</a></li>
+                <li><a href="/#How-it-works">How it works</a></li>
+                <li><a href="/menu">Browse Menu</a></li>
+                <li><a href="/contact-page">Contact Us</a></li>
+                <li><a href="/login-page">Login</a></li>
+                <li><a href="/signup-page" class="nav-btn">Sign Up</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="static-hero">
+        <div class="row">
+            <h1>Contact Careers</h1>
+            <p style="color: var(--text-light); font-size: 1.1rem;">Build the future of sustainable, organic food experiences.</p>
+        </div>
+    </div>
+
+    <main class="row">
+        <article class="static-content-box">
+            <p>
+                At Omnifood, we are driven by innovation, health, and a commitment to our planet. We build cutting-edge logistics frameworks and partner with top culinary professionals to make gourmet subscription dining an everyday reality.
+            </p>
+            
+            <h3>Why Join Us?</h3>
+            <p>
+                Enjoy flexible remote schedules, free daily gourmet meals from our kitchens, complete health coverage plans, and work alongside a highly supportive engineering and operational squad.
+            </p>
+
+            <h3>Active Openings</h3>
+            
+            <div class="job-card">
+                <div>
+                    <span class="job-dept">Operations &amp; Culinary</span>
+                    <div class="job-title" style="margin-top: 5px;">Lead Kitchen Auditor / Certified Chef</div>
+                    <p style="margin: 5px 0 0 0; font-size: 0.85rem; color: var(--text-light);">Lisbon Hub • Full-Time</p>
+                </div>
+                <a href="/contact-page" class="btn btn-ghost" style="padding: 8px 20px; font-size: 0.85rem;">Apply Now &rarr;</a>
+            </div>
+
+            <div class="job-card">
+                <div>
+                    <span class="job-dept">Engineering</span>
+                    <div class="job-title" style="margin-top: 5px;">Senior Full Stack Engineer (Node.js/React)</div>
+                    <p style="margin: 5px 0 0 0; font-size: 0.85rem; color: var(--text-light);">Remote NYC / NYC HQ • Full-Time</p>
+                </div>
+                <a href="/contact-page" class="btn btn-ghost" style="padding: 8px 20px; font-size: 0.85rem;">Apply Now &rarr;</a>
+            </div>
+
+            <div class="job-card">
+                <div>
+                    <span class="job-dept">Logistics</span>
+                    <div class="job-title" style="margin-top: 5px;">Rider Relations Specialist / Area Coordinator</div>
+                    <p style="margin: 5px 0 0 0; font-size: 0.85rem; color: var(--text-light);">Delhi NCR Hub • Full-Time</p>
+                </div>
+                <a href="/contact-page" class="btn btn-ghost" style="padding: 8px 20px; font-size: 0.85rem;">Apply Now &rarr;</a>
+            </div>
+
+            <p style="text-align: center; margin-top: 30px; font-size: 0.9rem; color: var(--text-light);">
+                Don't see your profile? Drop us your resume at <strong style="color: var(--primary-color);">careers@omnifood.com</strong>!
+            </p>
+        </article>
+    </main>
+
+    <footer>
+        <div class="row footer-top">
+            <div class="footer-col">
+                <img src="/static/img/logo.png" alt="Omnifood Logo" class="footer-logo" style="filter: brightness(0) invert(1);">
+                <p class="footer-about-text">
+                    Bringing chef-crafted healthy diets and organic meals to food lovers worldwide. Experience snack heaven today.
+                </p>
+                <ul class="social-links">
+                    <li><a href="https://www.facebook.com/" aria-label="Facebook"><i class="ion-social-facebook"></i></a></li>
+                    <li><a href="https://x.com/" aria-label="Twitter"><i class="ion-social-twitter"></i></a></li>
+                    <li><a href="https://www.google.com" aria-label="Google"><i class="ion-social-googleplus"></i></a></li>
+                    <li><a href="https://www.instagram.com/" aria-label="Instagram"><i class="ion-social-instagram"></i></a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-col">
+                <h4>Company</h4>
+                <ul class="footer-nav">
+                    <li><a href="/about">About Us</a></li>
+                    <li><a href="/press">Press Kit</a></li>
+                    <li><a href="/careers">Contact Careers</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>Portals</h4>
+                <ul class="footer-nav">
+                    <li><a href="/menu">Browse Catalog</a></li>
+                    <li><a href="/delivery">Rider Companion</a></li>
+                    <li><a href="/admin">Admin Control Tower</a></li>
+                    <li><a href="/login-page">Account Login</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>Help Center</h4>
+                <ul class="footer-nav">
+                    <li><a href="/support">Customer Support</a></li>
+                    <li><a href="/safety">Safety &amp; Compliance</a></li>
+                    <li><a href="/terms">Terms of Use</a></li>
+                    <li><a href="/privacy">Privacy Policy</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="row footer-bottom">
+            <p>Copyright &copy; 2026 by Omnifood, Inc. All rights reserved.</p>
+            <p>Designed for premium food experiences worldwide.</p>
+        </div>
+    </footer>
+
+    <script>
+        const toggleBtn = document.getElementById("mobileNavToggleBtn");
+        const navLinks = document.getElementById("mainNavLinks");
+        const toggleIcon = document.getElementById("toggleIcon");
+        
+        toggleBtn.onclick = () => {
+            navLinks.classList.toggle("show-nav");
+            if (navLinks.classList.contains("show-nav")) {
+                toggleIcon.className = "ion-android-close";
+            } else {
+                toggleIcon.className = "ion-android-menu";
+            }
+        };
+    </script>
+</body>
+</html>

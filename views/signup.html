@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Omnifood</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/ionicons@2.0.1/css/ionicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/auth.css">
+</head>
+<body>
+
+    <div class="signup-container">
+        <div class="header-box">
+            <div class="logo-text">Omnifood</div>
+            <div class="subtitle">Create an account to order fresh gourmet food</div>
+        </div>
+
+        <div id="alertBox" class="alert"></div>
+
+        <form id="signupForm">
+            <div class="form-group">
+                <label for="name">Full Name</label>
+                <div class="input-wrapper">
+                    <i class="ion-ios-person-outline"></i>
+                    <input type="text" id="name" class="form-control" placeholder="Enter your full name" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <div class="input-wrapper">
+                    <i class="ion-ios-email-outline"></i>
+                    <input type="email" id="email" class="form-control" placeholder="Enter your email" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <div class="input-wrapper">
+                    <i class="ion-ios-telephone-outline"></i>
+                    <input type="tel" id="phone" class="form-control" placeholder="Enter your mobile number">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="address">Delivery Address</label>
+                <div class="input-wrapper">
+                    <i class="ion-ios-location-outline"></i>
+                    <input type="text" id="address" class="form-control" placeholder="Enter your delivery address">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="role">Register As</label>
+                <div class="input-wrapper">
+                    <i class="ion-ios-people-outline"></i>
+                    <select id="role" class="form-control" required>
+                        <option value="customer" selected>Customer (Order Food)</option>
+                        <option value="admin">Administrator (Manage System)</option>
+                        <option value="delivery">Delivery Partner (Deliver Food)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <div class="input-wrapper">
+                    <i class="ion-ios-locked-outline"></i>
+                    <input type="password" id="password" class="form-control" placeholder="Create a strong password" required>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-submit">Sign Up</button>
+        </form>
+
+        <div class="switch-link">
+            Already have an account? <a href="/login-page">Login here</a>
+            <div style="margin-top: 15px; border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 15px;">
+                <a href="/" style="font-size: 0.85rem; color: #eee; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: none;">
+                    <i class="ion-ios-home-outline" style="margin-right: 6px; font-size: 1.1rem; vertical-align: middle;"></i>Return to Home Page
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("signupForm").addEventListener("submit", async function(e) {
+            e.preventDefault();
+            const alertBox = document.getElementById("alertBox");
+            alertBox.style.display = "none";
+
+            const name = document.getElementById("name").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const phone = document.getElementById("phone").value.trim();
+            const address = document.getElementById("address").value.trim();
+            const role = document.getElementById("role").value;
+            const password = document.getElementById("password").value;
+
+            try {
+                const response = await fetch("/api/auth/signup", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ name, email, phone, address, role, password })
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    alertBox.className = "alert alert-success";
+                    alertBox.textContent = data.message + " Redirecting...";
+                    alertBox.style.display = "block";
+                    
+                    // Save user payload in client storage
+                    localStorage.setItem("user", JSON.stringify(data.user));
+
+                    setTimeout(() => {
+                        // Redirect to the appropriate dashboard
+                        if (data.user.role === "admin") {
+                            window.location.href = "/admin";
+                        } else if (data.user.role === "delivery") {
+                            window.location.href = "/delivery";
+                        } else {
+                            window.location.href = "/menu";
+                        }
+                    }, 2000);
+                } else {
+                    alertBox.className = "alert alert-error";
+                    alertBox.textContent = data.message || "Registration failed.";
+                    alertBox.style.display = "block";
+                }
+            } catch (err) {
+                alertBox.className = "alert alert-error";
+                alertBox.textContent = "Network error. Please try again.";
+                alertBox.style.display = "block";
+            }
+        });
+    </script>
+</body>
+</html>

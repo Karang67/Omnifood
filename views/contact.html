@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - Omnifood</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Ionicons -->
+    <link href="https://unpkg.com/ionicons@2.0.1/css/ionicons.min.css" rel="stylesheet">
+    <!-- Leaflet Map CDNs -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <!-- Custom stylesheet -->
+    <link rel="stylesheet" href="/static/css/styleContact.css">
+</head>
+<body>
+
+    <!-- Header navigation matching home page -->
+    <header>
+        <nav>
+            <div class="row">
+                <a href="/"><img src="/static/img/logo.png" alt="Omnifood Logo" class="logo"></a>
+                <button class="mobile-nav-toggle" id="mobileNavToggleBtn" aria-label="Toggle navigation Menu">
+                    <i class="ion-android-menu" id="toggleIcon"></i>
+                </button>
+                <ul class="main-nav" id="mainNavLinks">
+                    <li><a href="/#food-delivery">Food delivery</a></li>
+                    <li><a href="/#How-it-works">How it works</a></li>
+                    <li><a href="/menu">Browse Menu</a></li>
+                    <li><a href="/contact-page" style="color: #e23744; font-weight: 600;">Contact Us</a></li>
+                    <li><a href="/login-page">Login</a></li>
+                    <li><a href="/signup-page" class="btn-signup">Sign Up</a></li>
+                </ul>
+            </div>
+        </nav>
+        
+        <!-- Animated top statement -->
+        <div class="greeting-box">
+            <h2>Goodbye junk food, Hello super healthy meals.</h2>
+            <p>Reach out to our operations department or place custom corporate requests.</p>
+        </div>
+    </header>
+
+    <!-- Master Contact Layout Grid -->
+    <section class="contact-section">
+        
+        <!-- LEFT: Operations Pane Details -->
+        <div class="details-pane">
+            <h3>Operations HQ</h3>
+            
+            <div class="info-item">
+                <i class="ion-ios-location-outline"></i>
+                <div class="info-item-text">
+                    <strong>Corporate Location</strong>
+                    <p>120 Broadway Suite 3500, New York, NY 10271</p>
+                </div>
+            </div>
+            
+            <div class="info-item">
+                <i class="ion-ios-telephone-outline"></i>
+                <div class="info-item-text">
+                    <strong>Direct Operations Line</strong>
+                    <p>+1 (800) 555-OMNI (6664)</p>
+                </div>
+            </div>
+            
+            <div class="info-item">
+                <i class="ion-ios-email-outline"></i>
+                <div class="info-item-text">
+                    <strong>Administrative Support</strong>
+                    <p>operations@omnifood.com</p>
+                </div>
+            </div>
+            
+            <!-- Leaflet Interactive HQ Map -->
+            <div id="contactMap"></div>
+        </div>
+        
+        <!-- RIGHT: Premium Support Forms -->
+        <div class="form-pane">
+            <h3>Drop us a line</h3>
+            
+            <form action="/contact" method="post" class="contact-form">
+                <div class="contact-form-group">
+                    <label for="name" class="contact-label">Full Name</label>
+                    <input type="text" id="name" name="name" class="contact-input" placeholder="e.g. Alberto Duncan" required>
+                </div>
+                
+                <div class="contact-form-group">
+                    <label for="phone" class="contact-label">Phone Contact</label>
+                    <input type="tel" id="phone" name="phone" class="contact-input" placeholder="e.g. +1 (555) 321-7654" required>
+                </div>
+                
+                <div class="contact-form-group">
+                    <label for="email" class="contact-label">Email Address</label>
+                    <input type="email" id="email" name="email" class="contact-input" placeholder="e.g. alberto@duncan.com" required>
+                </div>
+                
+                <div class="contact-form-group">
+                    <label for="address" class="contact-label">Office / Residential Address</label>
+                    <input type="text" id="address" name="address" class="contact-input" placeholder="e.g. 15 Mercer St, SoHo NYC" required>
+                </div>
+                
+                <div class="contact-form-group">
+                    <label for="desc" class="contact-label">How can we assist you?</label>
+                    <textarea id="desc" name="desc" class="contact-textarea" placeholder="Detail your operational query, payment concern, or custom orders requests..." required></textarea>
+                </div>
+                
+                <button type="submit" class="btn-submit">
+                    Send message
+                </button>
+            </form>
+        </div>
+        
+    </section>
+
+    <!-- Standard Footer consistent with index.html -->
+    <footer>
+        <div class="row footer-top">
+            <div class="footer-col">
+                <img src="/static/img/logo.png" alt="Omnifood Logo" class="footer-logo" style="filter: brightness(0) invert(1);">
+                <p class="footer-about-text">
+                    Bringing chef-crafted healthy diets and organic meals to food lovers worldwide. Experience snack heaven today.
+                </p>
+                <ul class="social-links">
+                    <li><a href="https://www.facebook.com/" aria-label="Facebook"><i class="ion-social-facebook"></i></a></li>
+                    <li><a href="https://x.com/" aria-label="Twitter"><i class="ion-social-twitter"></i></a></li>
+                    <li><a href="https://www.google.com" aria-label="Google"><i class="ion-social-googleplus"></i></a></li>
+                    <li><a href="https://www.instagram.com/" aria-label="Instagram"><i class="ion-social-instagram"></i></a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-col">
+                <h4>Company</h4>
+                <ul class="footer-nav">
+                    <li><a href="/about">About Us</a></li>
+                    <li><a href="/press">Press Kit</a></li>
+                    <li><a href="/careers">Contact Careers</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>Portals</h4>
+                <ul class="footer-nav">
+                    <li><a href="/menu">Browse Catalog</a></li>
+                    <li><a href="/delivery">Rider Companion</a></li>
+                    <li><a href="/admin">Admin Control Tower</a></li>
+                    <li><a href="/login-page">Account Login</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>Help Center</h4>
+                <ul class="footer-nav">
+                    <li><a href="/support">Customer Support</a></li>
+                    <li><a href="/safety">Safety &amp; Compliance</a></li>
+                    <li><a href="/terms">Terms of Use</a></li>
+                    <li><a href="/privacy">Privacy Policy</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="row footer-bottom">
+            <p>Copyright &copy; 2026 by Omnifood, Inc. All rights reserved.</p>
+            <p>Designed for premium food experiences worldwide.</p>
+        </div>
+    </footer>
+
+    <!-- Initialize Leaflet Interactive HQ Map -->
+    <script>
+        const hqCoords = [40.7128, -74.0060]; // Broadway Suite center NYC
+        const map = L.map('contactMap', { zoomControl: false }).setView(hqCoords, 14);
+        
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap'
+        }).addTo(map);
+        
+        // Customized Pin icon
+        const redIcon = L.divIcon({
+            html: '<i class="ion-ios-location" style="font-size: 32px; color: #e23744; text-shadow: 0 0 4px #000;"></i>',
+            className: 'contact-hq-marker',
+            iconSize: [32, 32]
+        });
+        
+        L.marker(hqCoords, { icon: redIcon })
+            .addTo(map)
+            .bindPopup("<strong style='font-family: Outfit, sans-serif; color: #e23744;'>Omnifood Corporate HQ</strong><br><span style='font-size: 0.75rem; color:#666;'>Manhattan Operations Center</span>")
+            .openPopup();
+
+        // Mobile menu toggle button interaction
+        const toggleBtn = document.getElementById("mobileNavToggleBtn");
+        const navLinks = document.getElementById("mainNavLinks");
+        const toggleIcon = document.getElementById("toggleIcon");
+        
+        toggleBtn.onclick = () => {
+            navLinks.classList.toggle("show-nav");
+            if (navLinks.classList.contains("show-nav")) {
+                toggleIcon.className = "ion-android-close";
+            } else {
+                toggleIcon.className = "ion-android-menu";
+            }
+        };
+    </script>
+</body>
+</html>

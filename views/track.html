@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Order - Omnifood</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/ionicons@2.0.1/css/ionicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/track.css">
+</head>
+<body>
+
+    <div class="tracker-container">
+        <h1>Live Order Tracking</h1>
+        <div class="order-id-label" id="orderIdText">Order ID: Loading...</div>
+
+        <!-- Visual Tracking Track -->
+        <div class="timeline">
+            <div class="progress-bar-fill" id="progressBarFill"></div>
+            
+            <div class="timeline-step" id="step1">
+                <div class="step-icon-circle">
+                    <i class="ion-ios-paper-outline"></i>
+                </div>
+                <div class="step-title">Placed</div>
+            </div>
+            
+            <div class="timeline-step" id="step2">
+                <div class="step-icon-circle">
+                    <i class="ion-ios-nutrition-outline"></i>
+                </div>
+                <div class="step-title">Preparing</div>
+            </div>
+            
+            <div class="timeline-step" id="step3">
+                <div class="step-icon-circle">
+                    <i class="ion-ios-speedometer-outline"></i>
+                </div>
+                <div class="step-title">On The Way</div>
+            </div>
+            
+            <div class="timeline-step" id="step4">
+                <div class="step-icon-circle">
+                    <i class="ion-ios-checkmark-empty"></i>
+                </div>
+                <div class="step-title">Delivered</div>
+            </div>
+        </div>
+
+        <!-- Order details card -->
+        <div class="info-card">
+            <div class="info-header">Order Summary</div>
+            <div class="info-row">
+                <span class="info-label">Customer Name:</span>
+                <span id="summaryName">Loading...</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Delivery Address:</span>
+                <span id="summaryAddress">Loading...</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Order Items:</span>
+                <span id="summaryItems" style="text-align: right; max-width: 60%;">Loading...</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Total Subtotal:</span>
+                <span id="summaryTotal" style="color: #e23744; font-weight: 600;">$0.00</span>
+            </div>
+        </div>
+
+        <!-- Rider Assignment details card -->
+        <div class="info-card" id="riderCard">
+            <div class="info-header">Delivery Partner Details</div>
+            <div id="riderCardContent">
+                <span class="rider-pulse"></span><span style="color: #aaa; font-weight: 300;">Waiting for restaurant to assign a delivery partner...</span>
+            </div>
+        </div>
+
+        <a href="/menu" class="btn-back-menu">Return to Gourmet Menu</a>
+    </div>
+
+    <script>
+        // Extract order ID from url path
+        const pathSegments = window.location.pathname.split("/");
+        const orderId = pathSegments[pathSegments.length - 1];
+        
+        document.getElementById("orderIdText").textContent = `Order ID: ${orderId}`;
+
+        // Dynamic status tracker updater
+        async function updateStatus() {
+            try {
+                const response = await fetch(`/api/order/${orderId}`);
+                const order = await response.json();
+                
+                if (!order || !order.status) return;
+
+                // 1. Update summary fields
+                document.getElementById("summaryName").textContent = order.customerName;
+                document.getElementById("summaryAddress").textContent = order.address;
+                document.getElementById("summaryTotal").textContent = `$${order.totalAmount.toFixed(2)}`;
+                
+                const itemsStr = order.items.map(i => `${i.name} (x${i.quantity})`).join(", ");
+                document.getElementById("summaryItems").textContent = itemsStr;
+
+                // 2. Update Timeline indicators
+                const step1 = document.getElementById("step1");
+                const step2 = document.getElementById("step2");
+                const step3 = document.getElementById("step3");
+                const step4 = document.getElementById("step4");
+                const bar = document.getElementById("progressBarFill");
+
+                // Reset classes
+                const steps = [step1, step2, step3, step4];
+                steps.forEach(s => s.classList.remove("active", "completed"));
+
+                if (order.status === "Placed") {
+                    step1.classList.add("active");
+                    bar.style.width = "0%";
+                } else if (order.status === "Preparing") {
+                    step1.classList.add("completed");
+                    step2.classList.add("active");
+                    bar.style.width = "30%";
+                } else if (order.status === "Out for Delivery") {
+                    step1.classList.add("completed");
+                    step2.classList.add("completed");
+                    step3.classList.add("active");
+                    bar.style.width = "60%";
+                } else if (order.status === "Delivered") {
+                    step1.classList.add("completed");
+                    step2.classList.add("completed");
+                    step3.classList.add("completed");
+                    step4.classList.add("active");
+                    bar.style.width = "90%";
+                }
+
+                // 3. Update Delivery Rider details
+                const riderDiv = document.getElementById("riderCardContent");
+                if (order.deliveryPartner) {
+                    riderDiv.innerHTML = `
+                        <div class="info-row">
+                            <span class="info-label">Partner Name:</span>
+                            <span>${order.deliveryPartner.name}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Mobile Number:</span>
+                            <span>${order.deliveryPartner.phone || 'Not Provided'}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Email Profile:</span>
+                            <span>${order.deliveryPartner.email}</span>
+                        </div>
+                    `;
+                } else {
+                    riderDiv.innerHTML = `
+                        <span class="rider-pulse"></span><span style="color: #aaa; font-weight: 300;">Waiting for restaurant to assign a delivery partner...</span>
+                    `;
+                }
+
+            } catch (err) {
+                console.error("Failed to query live status updates:", err);
+            }
+        }
+
+        // Run initially
+        updateStatus();
+
+        // Query every 3 seconds for active updates
+        setInterval(updateStatus, 3000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,257 @@
+Language and Technologies Used
+JavaScript (ES6+ Syntax) – The programming language used in this code.
+
+Node.js – A runtime environment that allows JavaScript to run outside the browser.
+
+Express.js – A lightweight web framework for Node.js used to build web applications.
+
+MongoDB – A NoSQL database used for storing customer data.
+
+Mongoose – An ODM (Object Data Modeling) library that simplifies MongoDB interactions.
+
+Body-Parser (Deprecated) – Middleware used to parse incoming request bodies.
+
+Path Module – A built-in module in Node.js for working with file paths.
+
+ES Module (import/export) – A modern way of handling modules in JavaScript.
+
+Breakdown of the Code:
+1. Importing Required Modules
+js
+Copy
+Edit
+import express from "express";
+import mongoose from "mongoose";
+import bodyParser from "body-parser";
+import path from "path";
+import { fileURLToPath } from "url";
+express → Web framework for handling routes and requests.
+
+mongoose → Used to connect and interact with MongoDB.
+
+body-parser → Middleware for handling form data (now, express.urlencoded() is preferred).
+
+path → A built-in module to manage file and directory paths.
+
+fileURLToPath → Converts ES module import.meta.url to a file path.
+
+2. Handling __dirname in ES Modules
+js
+Copy
+Edit
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+Why?
+In CommonJS (require), we have __dirname. But in ES Modules (import/export), __dirname is not available.
+So, we manually derive it using fileURLToPath.
+
+3. Initializing Express Application
+js
+Copy
+Edit
+const app = express();
+const port = 9000;
+Creates an instance of an Express.js application.
+
+Sets port to 9000.
+
+4. Connecting to MongoDB
+js
+Copy
+Edit
+async function connectDB() {
+    try {
+        await mongoose.connect("mongodb://127.0.0.1:27017/customerData", {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+        });
+        console.log("Connected to MongoDB successfully!");
+    } catch (error) {
+        console.error("Error connecting to MongoDB:", error);
+    }
+}
+connectDB();
+async function → Handles MongoDB connection asynchronously.
+
+mongoose.connect() → Connects to the MongoDB database (customerData).
+
+Options:
+
+useNewUrlParser: true → Prevents deprecated URL parser warnings.
+
+useUnifiedTopology: true → Enables the new MongoDB driver topology engine.
+
+If the connection fails, an error is logged.
+
+5. Defining a Mongoose Schema and Model
+js
+Copy
+Edit
+const contactSchema = new mongoose.Schema({
+    name: String,
+    email: String,
+    phone: String,
+    address: String,
+    desc: String,
+    date: { type: Date, default: Date.now },
+});
+
+const Contact = mongoose.model("Contact", contactSchema);
+Schema (contactSchema) → Defines the structure of the Contact collection in MongoDB.
+
+Model (Contact) → Creates a model for CRUD operations.
+
+6. Middleware for Parsing Requests
+js
+Copy
+Edit
+app.use(bodyParser.urlencoded({ extended: true }));
+Parses form data from application/x-www-form-urlencoded forms.
+
+extended: true allows nested objects.
+
+Alternative (Modern Method - Replace bodyParser)
+
+js
+Copy
+Edit
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+express.urlencoded() → Parses form data.
+
+express.json() → Parses JSON data from requests.
+
+7. Serving Static Files
+js
+Copy
+Edit
+console.log("Serving static files from:", path.join(__dirname, 'static'));
+app.use('/static', express.static(path.join(__dirname, 'static')));
+Allows serving static files (CSS, images, JS).
+
+Files inside static/ can be accessed via /static/filename.ext.
+
+8. Setting Up Routes
+8.1 Home Page Route
+js
+Copy
+Edit
+app.get("/", (req, res) => {
+    console.log("Serving index.html from:", path.join(__dirname, "index.html"));
+    res.sendFile(path.join(__dirname, "index.html"));
+});
+GET request to / → Sends index.html as the response.
+
+8.2 Contact Page Route
+js
+Copy
+Edit
+app.get("/contact-page", (req, res) => {
+    console.log("Serving contact.html from:", path.join(__dirname, "contact.html"));
+    res.sendFile(path.join(__dirname, "contact.html"));
+});
+GET request to /contact-page → Sends contact.html.
+
+9. Handling Form Submission (POST /contact)
+js
+Copy
+Edit
+app.post("/contact", async (req, res) => {
+    const { name, email, phone, address, desc } = req.body;
+    const contactData = new Contact({ name, email, phone, address, desc });
+    try {
+        await contactData.save();
+        res.send(`
+            <h1>Thank you for your submission, ${name}!</h1>
+            <a href="/">Go back to the home page</a>
+        `);
+    } catch (error) {
+        console.error("Error saving to the database:", error.message);
+        res.status(500).send(`
+            <h1>Something went wrong. Please try again.</h1>
+            <p>${error.message}</p>
+        `);
+    }
+});
+Handles POST requests from the contact form.
+
+Retrieves form data from req.body.
+
+Saves data to MongoDB.
+
+Sends a thank-you response on success.
+
+If an error occurs, it sends an error message.
+
+10. Starting the Express Server
+js
+Copy
+Edit
+app.listen(port, () => {
+    console.log(`Server running at http://localhost:${port}`);
+});
+Starts the server and listens on port 9000.
+
+Logs a success message with the server URL.
+
+Advanced Improvements
+1. Use .env for Configuration
+Install dotenv:
+
+sh
+Copy
+Edit
+npm install dotenv
+Create .env file:
+
+sh
+Copy
+Edit
+MONGO_URI=mongodb://127.0.0.1:27017/customerData
+PORT=9000
+Modify the code:
+
+js
+Copy
+Edit
+import dotenv from "dotenv";
+dotenv.config();
+
+const port = process.env.PORT || 9000;
+mongoose.connect(process.env.MONGO_URI);
+2. Add Data Validation
+Use Mongoose validation for form fields:
+
+js
+Copy
+Edit
+const contactSchema = new mongoose.Schema({
+    name: { type: String, required: true },
+    email: { type: String, required: true },
+    phone: { type: String, required: true },
+    address: String,
+    desc: String,
+    date: { type: Date, default: Date.now },
+});
+Prevents missing name, email, or phone.
+
+Final Thoughts
+✅ Basic Concepts Covered
+
+Express.js routing, middleware, static file serving.
+
+MongoDB and Mongoose schema.
+
+✅ Intermediate Concepts
+
+Handling form submissions, async/await.
+
+Error handling.
+
+✅ Advanced Concepts
+
+Environment variables (dotenv).
+
+Schema validation.
+
+Would you like help with authentication, frontend integration, or error logging? 

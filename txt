@@ -1,0 +1,44 @@
+first start the server : mongod
+second start mongodb shell :mongosh
+thirst open terminal write command 'node app.mjs' then enter
+go your web page and fill the details in the form and submit this form
+
+After submit the form come back to the mongodb shell
+
+write command "use customerData"   {your data name}
+now you are switched to the :customerData {depends on your data name}
+now write command "db.contacts.find().pretty()"  then enter
+
+This the data what was you enter previously
+
+
+{
+    _id: ObjectId('679766884eef5a8080eb27f2'),
+    name: 'karan',
+    email: 'karangehlot9116@gmail.com',
+    findUs: 'friends',
+    newsletter: true,
+    message: 'hi this is my first backend project',
+    date: ISODate('2025-01-27T10:57:12.998Z'),
+    __v: 0
+  },
+  {
+    _id: ObjectId('67976aa9977b04bd06deff0a'),
+    name: 'gehlot',
+    email: 'karangehlot9116@gmail.com',
+    findUs: 'search',
+    newsletter: true,
+    message: 'hii hello',
+    date: ISODate('2025-01-27T11:14:49.422Z'),
+    __v: 0
+  },
+  {
+    _id: ObjectId('67976ae0977b04bd06deff0c'),
+    name: 'rakesh',
+    email: 'kumarkaran@gmail.com',
+    findUs: 'ad',
+    newsletter: true,
+    message: 'hii good morning',
+    date: ISODate('2025-01-27T11:15:44.738Z'),
+    __v: 0
+  }
