@@ -1,7 +1,13 @@
 import { useState, useEffect } from 'react';
 
-const WebsiteCms = () => {
+const WebsiteCms = ({ activeTab }) => {
     const [subTab, setSubTab] = useState('homepage');
+
+    useEffect(() => {
+        if (['homepage', 'banners', 'seo'].includes(activeTab)) {
+            setSubTab(activeTab);
+        }
+    }, [activeTab]);
     const [config, setConfig] = useState(null);
     const [banners, setBanners] = useState([]);
     const [loading, setLoading] = useState(true);

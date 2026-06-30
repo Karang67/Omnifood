@@ -1,7 +1,13 @@
 import { useState, useEffect } from 'react';
 
-const ContentCms = () => {
+const ContentCms = ({ activeTab }) => {
     const [subTab, setSubTab] = useState('blogs');
+
+    useEffect(() => {
+        if (['blogs', 'faqs'].includes(activeTab)) {
+            setSubTab(activeTab);
+        }
+    }, [activeTab]);
     const [blogs, setBlogs] = useState([]);
     const [faqs, setFaqs] = useState([]);
     const [loading, setLoading] = useState(true);

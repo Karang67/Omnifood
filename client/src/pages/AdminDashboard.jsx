@@ -61,13 +61,13 @@ const AdminDashboard = () => {
 
         {/* Tab Selection Content viewport */}
         {activeTab === 'dashboard' && <DashboardHome />}
-        {(activeTab === 'homepage' || activeTab === 'banners' || activeTab === 'seo') && <WebsiteCms />}
-        {(activeTab === 'categories' || activeTab === 'foods' || activeTab === 'coupons' || activeTab === 'offers') && <FoodCms />}
-        {(activeTab === 'restaurants' || activeTab === 'reviews') && <RestaurantCms />}
-        {(activeTab === 'orders-dispatch' || activeTab === 'refunds') && <OrderCms />}
-        {(activeTab === 'customers' || activeTab === 'riders' || activeTab === 'owners') && <UserCms />}
-        {(activeTab === 'blogs' || activeTab === 'faqs') && <ContentCms />}
-        {(activeTab === 'settings-gateways' || activeTab === 'settings-fees' || activeTab === 'backups') && <SettingsCms />}
+        {(activeTab === 'homepage' || activeTab === 'banners' || activeTab === 'seo') && <WebsiteCms activeTab={activeTab} />}
+        {(activeTab === 'categories' || activeTab === 'foods' || activeTab === 'coupons' || activeTab === 'offers') && <FoodCms activeTab={activeTab} />}
+        {(activeTab === 'restaurants' || activeTab === 'reviews') && <RestaurantCms activeTab={activeTab} />}
+        {(activeTab === 'orders-dispatch' || activeTab === 'refunds') && <OrderCms activeTab={activeTab} />}
+        {(activeTab === 'customers' || activeTab === 'riders' || activeTab === 'owners') && <UserCms activeTab={activeTab} />}
+        {(activeTab === 'blogs' || activeTab === 'faqs') && <ContentCms activeTab={activeTab} />}
+        {(activeTab === 'settings-gateways' || activeTab === 'settings-fees' || activeTab === 'backups') && <SettingsCms activeTab={activeTab} />}
       </main>
     </div>
   );

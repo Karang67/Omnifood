@@ -1,7 +1,17 @@
 import { useState, useEffect } from 'react';
 
-const UserCms = () => {
+const UserCms = ({ activeTab }) => {
     const [subTab, setSubTab] = useState('customers');
+
+    useEffect(() => {
+        if (activeTab === 'customers') {
+            setSubTab('customers');
+        } else if (activeTab === 'riders') {
+            setSubTab('riders');
+        } else if (activeTab === 'owners') {
+            setSubTab('owners');
+        }
+    }, [activeTab]);
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');

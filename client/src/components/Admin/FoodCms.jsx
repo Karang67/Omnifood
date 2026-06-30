@@ -1,7 +1,13 @@
 import { useState, useEffect } from 'react';
 
-const FoodCms = () => {
+const FoodCms = ({ activeTab }) => {
     const [subTab, setSubTab] = useState('categories');
+
+    useEffect(() => {
+        if (['categories', 'foods', 'coupons', 'offers'].includes(activeTab)) {
+            setSubTab(activeTab);
+        }
+    }, [activeTab]);
     const [categories, setCategories] = useState([]);
     const [foods, setFoods] = useState([]);
     const [coupons, setCoupons] = useState([]);

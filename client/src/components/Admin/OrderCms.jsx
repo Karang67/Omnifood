@@ -1,7 +1,15 @@
 import { useState, useEffect } from 'react';
 
-const OrderCms = () => {
+const OrderCms = ({ activeTab }) => {
     const [subTab, setSubTab] = useState('active');
+
+    useEffect(() => {
+        if (activeTab === 'orders-dispatch') {
+            setSubTab('active');
+        } else if (activeTab === 'refunds') {
+            setSubTab('refunds');
+        }
+    }, [activeTab]);
     const [orders, setOrders] = useState([]);
     const [fleet, setFleet] = useState([]);
     const [refunds, setRefunds] = useState([]);

@@ -1,7 +1,13 @@
 import { useState, useEffect } from 'react';
 
-const RestaurantCms = () => {
+const RestaurantCms = ({ activeTab }) => {
     const [subTab, setSubTab] = useState('restaurants');
+
+    useEffect(() => {
+        if (['restaurants', 'reviews'].includes(activeTab)) {
+            setSubTab(activeTab);
+        }
+    }, [activeTab]);
     const [restaurants, setRestaurants] = useState([]);
     const [reviews, setReviews] = useState([]);
     const [loading, setLoading] = useState(true);
