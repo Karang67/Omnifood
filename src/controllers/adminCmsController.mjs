@@ -95,7 +95,8 @@ export async function updateCmsConfig(req, res) {
         }
         
         // Merge settings data dynamically
-        config[section] = { ...config[section], ...data };
+        config[section] = data;
+        config.markModified(section);
         await config.save();
         res.json({ success: true, message: "Settings updated successfully!", config });
     } catch (error) {
