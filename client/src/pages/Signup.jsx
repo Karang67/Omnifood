@@ -235,8 +235,9 @@ const Signup = () => {
                 disabled={loading}
               >
                 <option value="customer">Customer (Order Food)</option>
-                <option value="admin">Administrator (Manage System)</option>
-                <option value="delivery">Delivery Partner (Deliver Food)</option>
+                <option value="rider">Rider (Deliver Food)</option>
+                <option value="restaurant_owner">Restaurant Owner</option>
+                <option value="super_admin">Super Admin (Manage System)</option>
               </select>
             </div>
           </div>
