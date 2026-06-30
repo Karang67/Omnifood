@@ -82,7 +82,10 @@ const cmsConfigSchema = new mongoose.Schema({
         faviconUrl: { type: String, default: "/static/img/logo.png" },
         currency: { type: String, default: "USD" },
         timezone: { type: String, default: "America/New_York" },
-        maintenanceMode: { type: Boolean, default: false }
+        maintenanceMode: { type: Boolean, default: false },
+        disableMenuPage: { type: Boolean, default: false },
+        disableCartPage: { type: Boolean, default: false },
+        disableCheckoutPage: { type: Boolean, default: false }
     },
     // Theme Settings
     theme: {

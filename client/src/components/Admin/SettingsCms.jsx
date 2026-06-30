@@ -77,7 +77,7 @@ const SettingsCms = ({ activeTab }) => {
                     e.preventDefault();
                     handleConfigSave('website', config.website);
                     handleConfigSave('theme', config.theme);
-                }} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px', maxWidth: '800px' }}>
+                }} className="catalog-grid" style={{ maxWidth: '800px' }}>
                     
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
                         <h3 style={{ color: '#fff', fontSize: '1.1rem', margin: 0 }}>Platform Details</h3>
@@ -111,6 +111,34 @@ const SettingsCms = ({ activeTab }) => {
                                     onChange={(e) => setConfig({
                                         ...config,
                                         website: { ...config.website, maintenanceMode: e.target.checked }
+                                    })}
+                                />
+                                <span className="slider"></span>
+                            </label>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.03)', padding: '12px 16px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.06)', marginTop: '10px' }}>
+                            <span style={{ color: '#fff', fontWeight: 500 }}>Disable Menu Page</span>
+                            <label className="switch">
+                                <input 
+                                    type="checkbox" 
+                                    checked={config.website.disableMenuPage || false} 
+                                    onChange={(e) => setConfig({
+                                        ...config,
+                                        website: { ...config.website, disableMenuPage: e.target.checked }
+                                    })}
+                                />
+                                <span className="slider"></span>
+                            </label>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.03)', padding: '12px 16px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.06)', marginTop: '10px' }}>
+                            <span style={{ color: '#fff', fontWeight: 500 }}>Disable Cart Checkout</span>
+                            <label className="switch">
+                                <input 
+                                    type="checkbox" 
+                                    checked={config.website.disableCheckoutPage || false} 
+                                    onChange={(e) => setConfig({
+                                        ...config,
+                                        website: { ...config.website, disableCheckoutPage: e.target.checked }
                                     })}
                                 />
                                 <span className="slider"></span>
@@ -187,7 +215,7 @@ const SettingsCms = ({ activeTab }) => {
                     e.preventDefault();
                     handleConfigSave('delivery', config.delivery);
                     handleConfigSave('tax', config.tax);
-                }} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px', maxWidth: '800px' }}>
+                }} className="catalog-grid" style={{ maxWidth: '800px' }}>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
                         <h3 style={{ color: '#fff', fontSize: '1.1rem', margin: 0 }}>Delivery Charges & Limits</h3>
                         <div className="form-group">

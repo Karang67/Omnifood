@@ -103,6 +103,7 @@ const MenuPage = () => {
   const [cartDrawerOpen, setCartDrawerOpen] = useState(false);
   const [checkoutModalOpen, setCheckoutModalOpen] = useState(false);
   const [customizerOpen, setCustomizerOpen] = useState(false);
+  const [config, setConfig] = useState(null);
   
   // Customizer state
   const [customizerItem, setCustomizerItem] = useState(null);
@@ -234,6 +235,13 @@ const MenuPage = () => {
 
   // Countdowns
   const [countdownText, setCountdownText] = useState('14:59 mins left');
+
+  useEffect(() => {
+    fetch('/api/cms/config')
+      .then(res => res.json())
+      .then(data => setConfig(data))
+      .catch(err => console.error(err));
+  }, []);
 
   // Load foods & prefill state from hero page search
   useEffect(() => {
@@ -981,7 +989,13 @@ const MenuPage = () => {
                   <span>Grand Total</span>
                   <span id="totalVal">${subtotal.toFixed(2)}</span>
                 </div>
-                <button className="btn-cart-checkout" onClick={() => setCheckoutModalOpen(true)}>Proceed to Order</button>
+                <button className="btn-cart-checkout" onClick={() => {
+                   if (config?.website?.disableCheckoutPage) {
+                     alert("Online checkout is temporarily offline. We are preparing orders via phone/COD only.");
+                   } else {
+                     setCheckoutModalOpen(true);
+                   }
+                 }}>Proceed to Order</button>
               </div>
             )}
           </div>

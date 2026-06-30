@@ -264,7 +264,7 @@ const WebsiteCms = ({ activeTab }) => {
 
             {/* TAB 2: Banners */}
             {subTab === 'banners' && (
-                <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '30px' }}>
+                <div className="catalog-grid">
                     <form onSubmit={handleAddBanner} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
                         <h3 style={{ color: '#fff', fontSize: '1.1rem', margin: 0 }}>Add New Homepage Banner</h3>
                         <div className="form-group">
@@ -307,7 +307,7 @@ const WebsiteCms = ({ activeTab }) => {
 
             {/* TAB 3: Features */}
             {subTab === 'features' && (
-                <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '30px' }}>
+                <div className="catalog-grid">
                     <form onSubmit={(e) => {
                         e.preventDefault();
                         handleSaveListItem('featuresList', featureForm, () => setFeatureForm({ id: '', title: '', description: '', icon: 'ion-ios-infinite-outline', isActive: true }));
@@ -356,7 +356,7 @@ const WebsiteCms = ({ activeTab }) => {
 
             {/* TAB 4: How it Works */}
             {subTab === 'steps' && (
-                <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '30px' }}>
+                <div className="catalog-grid">
                     <form onSubmit={(e) => {
                         e.preventDefault();
                         handleSaveListItem('stepsList', { ...stepForm, stepNumber: parseInt(stepForm.stepNumber) }, () => setStepForm({ id: '', stepNumber: '', title: '', description: '', isActive: true }));
@@ -405,7 +405,7 @@ const WebsiteCms = ({ activeTab }) => {
 
             {/* TAB 5: Cities */}
             {subTab === 'cities' && (
-                <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '30px' }}>
+                <div className="catalog-grid">
                     <form onSubmit={(e) => {
                         e.preventDefault();
                         handleSaveListItem('citiesList', cityForm, () => setCityForm({ id: '', name: '', image: '', eaters: '', chefs: '', twitter: '', isActive: true }));
@@ -465,7 +465,7 @@ const WebsiteCms = ({ activeTab }) => {
 
             {/* TAB 6: Testimonials */}
             {subTab === 'testimonials' && (
-                <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '30px' }}>
+                <div className="catalog-grid">
                     <form onSubmit={(e) => {
                         e.preventDefault();
                         handleSaveListItem('testimonialsList', { ...testimonialForm, rating: parseFloat(testimonialForm.rating) }, () => setTestimonialForm({ id: '', name: '', role: '', quote: '', rating: 5, imageUrl: '', isActive: true }));
@@ -525,7 +525,7 @@ const WebsiteCms = ({ activeTab }) => {
 
             {/* TAB 7: Pricing Plans */}
             {subTab === 'plans' && (
-                <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '30px' }}>
+                <div className="catalog-grid">
                     <form onSubmit={(e) => {
                         e.preventDefault();
                         const featuresList = planForm.featuresRaw.split('\n').filter(line => line.trim() !== '');
