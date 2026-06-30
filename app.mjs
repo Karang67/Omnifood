@@ -15,6 +15,7 @@ import SurgeZone from "./src/models/SurgeZone.mjs";
 import viewRoutes from "./src/routes/viewRoutes.mjs";
 import authRoutes from "./src/routes/authRoutes.mjs";
 import apiRoutes from "./src/routes/apiRoutes.mjs";
+import adminRoutes from "./src/routes/adminRoutes.mjs";
 
 // Derive path variables
 const __filename = fileURLToPath(import.meta.url);
@@ -50,6 +51,7 @@ app.use(express.static(path.join(__dirname, 'client/dist')));
 // Mount MVC Routers
 app.use("/api/auth", authRoutes); // Authentication APIs
 app.use("/", apiRoutes);          // Main Order and Admin APIs
+app.use("/", adminRoutes);        // Admin CMS configurations
 app.use("/", viewRoutes);         // Frontend View router serving pages
 
 // Gourmet food seeding catalog data
