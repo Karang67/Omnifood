@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: omnifood
+    env: node
+    plan: free
+    buildCommand: npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        generateValue: true
+      - key: MONGO_URI
+        value: mongodb+srv://karangehlot5686:Karang67%40@anonhub.beu65ll.mongodb.net/customerData?retryWrites=true&w=majority&appName=AnonHub
