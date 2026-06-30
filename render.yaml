@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: omnifood
+    env: node
+    plan: free
+    buildCommand: cd client && npm install && npm run build
+    startCommand: npm install && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        generateValue: true
+      - key: MONGO_URI
+        placeholder: "Your MongoDB Atlas connection URI (e.g. mongodb+srv://...)"
