@@ -21,12 +21,8 @@ const AdminDashboard = () => {
   useEffect(() => {
     if (!user) {
       navigate('/login');
-    } else if (
-      user.role !== 'admin' && 
-      user.role !== 'super_admin' && 
-      user.role !== 'website_manager'
-    ) {
-      navigate('/menu');
+    } else if (user.role !== 'super_admin') {
+      navigate('/access-denied');
     }
   }, [user, navigate]);
 
@@ -35,7 +31,7 @@ const AdminDashboard = () => {
     navigate('/login');
   };
 
-  if (!user || (user.role !== 'admin' && user.role !== 'super_admin' && user.role !== 'website_manager')) return null;
+  if (!user || user.role !== 'super_admin') return null;
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: '#0b0f19', color: '#fff' }}>
@@ -69,7 +65,7 @@ const AdminDashboard = () => {
         {(activeTab === 'categories' || activeTab === 'foods' || activeTab === 'coupons' || activeTab === 'offers') && <FoodCms />}
         {(activeTab === 'restaurants' || activeTab === 'reviews') && <RestaurantCms />}
         {(activeTab === 'orders-dispatch' || activeTab === 'refunds') && <OrderCms />}
-        {(activeTab === 'customers' || activeTab === 'riders') && <UserCms />}
+        {(activeTab === 'customers' || activeTab === 'riders' || activeTab === 'owners') && <UserCms />}
         {(activeTab === 'blogs' || activeTab === 'faqs') && <ContentCms />}
         {(activeTab === 'settings-gateways' || activeTab === 'settings-fees' || activeTab === 'backups') && <SettingsCms />}
       </main>

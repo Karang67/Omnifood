@@ -34,6 +34,8 @@ import {
     getUsersList,
     updateUserBanStatus,
     updateUserWallet,
+    updateUser,
+    deleteUser,
     exportCollection,
     getAnalyticsDashboard
 } from "../controllers/adminCmsController.mjs";
@@ -44,7 +46,7 @@ const router = express.Router();
 router.get("/api/cms/config", getCmsConfig);
 
 // Protected admin paths
-const cmsAuth = [authenticateJWT, authorizeRoles("admin", "super_admin", "website_manager")];
+const cmsAuth = [authenticateJWT, authorizeRoles("super_admin")];
 
 // Banners
 router.get("/api/admin/banners", cmsAuth, getBanners);
@@ -93,6 +95,8 @@ router.delete("/api/admin/faqs/:id", cmsAuth, deleteFaq);
 router.get("/api/admin/users", cmsAuth, getUsersList);
 router.put("/api/admin/users/ban/:id", cmsAuth, updateUserBanStatus);
 router.put("/api/admin/users/wallet/:id", cmsAuth, updateUserWallet);
+router.put("/api/admin/users/update/:id", cmsAuth, updateUser);
+router.delete("/api/admin/users/:id", cmsAuth, deleteUser);
 
 // Settings
 router.put("/api/admin/settings", cmsAuth, updateCmsConfig);

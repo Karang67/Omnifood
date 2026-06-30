@@ -66,7 +66,8 @@ const Sidebar = ({ activeTab, setActiveTab, onLogout, userName }) => {
             label: "Users & Fleet",
             items: [
                 { id: "customers", label: "Customers", icon: "ion-ios-people" },
-                { id: "riders", label: "Delivery Partners", icon: "ion-android-bicycle" }
+                { id: "riders", label: "Delivery Partners", icon: "ion-android-bicycle" },
+                { id: "owners", label: "Restaurant Owners", icon: "ion-person" }
             ]
         },
         {

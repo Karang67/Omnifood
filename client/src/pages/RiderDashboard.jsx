@@ -35,14 +35,14 @@ const RiderDashboard = () => {
   useEffect(() => {
     if (!user) {
       navigate('/login');
-    } else if (user.role !== 'delivery') {
-      navigate('/menu');
+    } else if (user.role !== 'rider') {
+      navigate('/access-denied');
     }
   }, [user, navigate]);
 
   // Load Rider Profile & Duties
   async function loadRiderProfile() {
-    if (!user || user.role !== 'delivery') return;
+    if (!user || user.role !== 'rider') return;
     try {
       const res = await fetch("/api/admin/delivery-partners");
       const list = await res.json();

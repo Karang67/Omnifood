@@ -18,6 +18,8 @@ import RiderDashboard from './pages/RiderDashboard';
 import TrackOrder from './pages/TrackOrder';
 import StaticPages from './pages/StaticPages';
 import VerifyEmail from './pages/VerifyEmail';
+import ProtectedRoute from './components/ProtectedRoute';
+import AccessDenied from './pages/AccessDenied';
 
 const App = () => {
   return (
@@ -34,9 +36,18 @@ const App = () => {
               <Route path="/signup" element={<Signup />} />
               <Route path="/verify-email" element={<VerifyEmail />} />
               <Route path="/profile" element={<Profile />} />
-              <Route path="/admin" element={<AdminDashboard />} />
-              <Route path="/delivery" element={<RiderDashboard />} />
+              <Route path="/admin" element={
+                <ProtectedRoute allowedRoles={['super_admin']}>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              } />
+              <Route path="/delivery" element={
+                <ProtectedRoute allowedRoles={['rider', 'super_admin']}>
+                  <RiderDashboard />
+                </ProtectedRoute>
+              } />
               <Route path="/track/:orderId" element={<TrackOrder />} />
+              <Route path="/access-denied" element={<AccessDenied />} />
 
               {/* Static Pages */}
               <Route path="/about" element={<StaticPages />} />

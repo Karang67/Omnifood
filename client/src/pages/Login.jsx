@@ -25,9 +25,9 @@ const Login = () => {
         });
         
         setTimeout(() => {
-          if (result.user.role === 'admin') {
+          if (result.user.role === 'super_admin') {
             navigate('/admin');
-          } else if (result.user.role === 'delivery') {
+          } else if (result.user.role === 'rider') {
             navigate('/delivery');
           } else {
             navigate('/menu');
@@ -99,9 +99,9 @@ const Login = () => {
         });
         
         setTimeout(() => {
-          if (result.user.role === 'admin') {
+          if (result.user.role === 'super_admin') {
             navigate('/admin');
-          } else if (result.user.role === 'delivery') {
+          } else if (result.user.role === 'rider') {
             navigate('/delivery');
           } else {
             navigate('/menu');

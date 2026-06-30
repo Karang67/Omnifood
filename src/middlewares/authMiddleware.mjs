@@ -1,7 +1,8 @@
 import jwt from "jsonwebtoken";
+import User from "../models/User.mjs";
 
-// Middleware to authenticate requests using JWT stored in cookies
-export function authenticateJWT(req, res, next) {
+// Middleware to authenticate requests using JWT stored in cookies & check active state
+export async function authenticateJWT(req, res, next) {
     const token = req.cookies.token;
     
     if (!token) {
@@ -10,6 +11,17 @@ export function authenticateJWT(req, res, next) {
     
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        
+        // Check database for active status & bans
+        const userObj = await User.findById(decoded.id);
+        if (!userObj) {
+            return res.status(401).json({ success: false, message: "User account no longer exists." });
+        }
+        if (userObj.isBanned) {
+            res.clearCookie("token");
+            return res.status(403).json({ success: false, message: "Your account is currently suspended/banned by administrators." });
+        }
+
         req.user = decoded; // Contains id, email, role, name
         next();
     } catch (error) {
@@ -17,7 +29,7 @@ export function authenticateJWT(req, res, next) {
     }
 }
 
-// Middleware to restrict access by user roles (e.g. admin, delivery)
+// Middleware to restrict access by user roles (e.g. super_admin, rider, restaurant_owner)
 export function authorizeRoles(...roles) {
     return (req, res, next) => {
         if (!req.user || !roles.includes(req.user.role)) {

@@ -14,6 +14,8 @@ import User from "../models/User.mjs";
 import Order from "../models/Order.mjs";
 import FoodItem from "../models/FoodItem.mjs";
 import { uploadToCloudinary } from "../utils/uploadService.mjs";
+import AuditLog from "../models/AuditLog.mjs";
+import bcrypt from "bcryptjs";
 
 // Ensure settings exist and return them
 export async function getCmsConfig(req, res) {
@@ -522,13 +524,65 @@ export async function getAnalyticsDashboard(req, res) {
                 totalUsers,
                 totalOrders,
                 totalRevenue,
-                activeRiders: await User.countDocuments({ role: "delivery", isOnline: true }),
-                totalRiders: await User.countDocuments({ role: "delivery" })
+                activeRiders: await User.countDocuments({ role: "rider", isOnline: true }),
+                totalRiders: await User.countDocuments({ role: "rider" }),
+                totalOwners: await User.countDocuments({ role: "restaurant_owner" })
             },
             dailyOrders,
             popularCategories,
             statusBreakdown
         });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+}
+
+export async function updateUser(req, res) {
+    const { id } = req.params;
+    const { name, email, phone, address, role, password } = req.body;
+    try {
+        const user = await User.findById(id);
+        if (!user) return res.status(404).json({ success: false, message: "User not found." });
+
+        if (name) user.name = name;
+        if (email) user.email = email;
+        if (phone !== undefined) user.phone = phone;
+        if (address !== undefined) user.address = address;
+        if (role) user.role = role;
+        if (password) {
+            user.password = await bcrypt.hash(password, 10);
+        }
+        await user.save();
+
+        const log = new AuditLog({
+            adminId: req.user.id,
+            adminEmail: req.user.email,
+            action: `UPDATE_USER_ACCOUNT`,
+            targetId: user._id.toString()
+        });
+        await log.save();
+
+        res.json({ success: true, message: "User details updated!", user });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+}
+
+export async function deleteUser(req, res) {
+    const { id } = req.params;
+    try {
+        const user = await User.findByIdAndDelete(id);
+        if (!user) return res.status(404).json({ success: false, message: "User not found." });
+
+        const log = new AuditLog({
+            adminId: req.user.id,
+            adminEmail: req.user.email,
+            action: `DELETE_USER_ACCOUNT`,
+            targetId: id
+        });
+        await log.save();
+
+        res.json({ success: true, message: "User deleted successfully!" });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }

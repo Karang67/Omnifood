@@ -78,10 +78,10 @@ const Header = () => {
             {user ? (
               <>
                 <li><Link to="/profile" onClick={() => setMobileMenuOpen(false)} style={{ fontWeight: '500', color: '#e67e22' }}>Profile</Link></li>
-                {user.role === 'admin' && (
+                {user.role === 'super_admin' && (
                   <li><Link to="/admin" onClick={() => setMobileMenuOpen(false)} className="nav-portal-btn">Admin Portal</Link></li>
                 )}
-                {user.role === 'delivery' && (
+                {user.role === 'rider' && (
                   <li><Link to="/delivery" onClick={() => setMobileMenuOpen(false)} className="nav-portal-btn">Rider Portal</Link></li>
                 )}
                 <li><span className="welcome-text-span" style={{ marginRight: '10px', color: '#555' }}>Hi, {user.name}</span></li>

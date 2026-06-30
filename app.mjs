@@ -12,6 +12,7 @@ import { fileURLToPath } from "url";
 import connectDB from "./src/config/db.mjs";
 import FoodItem from "./src/models/FoodItem.mjs";
 import SurgeZone from "./src/models/SurgeZone.mjs";
+import User from "./src/models/User.mjs";
 import viewRoutes from "./src/routes/viewRoutes.mjs";
 import authRoutes from "./src/routes/authRoutes.mjs";
 import apiRoutes from "./src/routes/apiRoutes.mjs";
@@ -95,9 +96,27 @@ async function seedSurgeZones() {
     }
 }
 
+// Automatically migrate legacy roles to exactly the 4 requested RBAC roles
+async function migrateUserRoles() {
+    try {
+        const adminRes = await User.updateMany({ role: "admin" }, { role: "super_admin" });
+        if (adminRes.modifiedCount > 0) {
+            console.log(`Successfully migrated ${adminRes.modifiedCount} "admin" users to "super_admin"`);
+        }
+
+        const deliveryRes = await User.updateMany({ role: "delivery" }, { role: "rider" });
+        if (deliveryRes.modifiedCount > 0) {
+            console.log(`Successfully migrated ${deliveryRes.modifiedCount} "delivery" users to "rider"`);
+        }
+    } catch (error) {
+        console.error("User roles migration failed:", error.message);
+    }
+}
+
 // Start database and Express listener
 async function startServer() {
     await connectDB();
+    await migrateUserRoles();
     await seedFoodCatalog();
     await seedSurgeZones();
     

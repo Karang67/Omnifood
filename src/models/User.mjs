@@ -6,7 +6,7 @@ const userSchema = new mongoose.Schema({
     password: { type: String, required: true }, // Hashed
     phone: { type: String, default: "" },
     address: { type: String, default: "" },
-    role: { type: String, enum: ["customer", "admin", "delivery", "super_admin", "website_manager", "restaurant_manager", "delivery_manager", "marketing_manager", "support"], default: "customer" },
+    role: { type: String, enum: ["customer", "rider", "restaurant_owner", "super_admin"], default: "customer" },
     permissions: [{ type: String }],
     isBanned: { type: Boolean, default: false },
     walletBalance: { type: Number, default: 0 },
