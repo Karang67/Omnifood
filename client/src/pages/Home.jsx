@@ -52,9 +52,9 @@ const Home = () => {
           <div className="row hero-content">
             <div className="hero-text-box">
               <p className="hero-subtitle">Satisfy your cravings</p>
-              <h1>More flavor, <span>less fuss.</span><br />welcome to snack heaven</h1>
+              <h1>{config?.homepage?.hero?.heading || "More flavor, <span>less fuss.</span>"}<br />{config?.homepage?.hero?.subheading || "welcome to snack heaven"}</h1>
               <p className="hero-description">
-                Hello, we're Omnifood, your premium food delivery companion. Skip the kitchen chores and enjoy super healthy, delicious chef-curated meals delivered straight to your door.
+                {config?.homepage?.hero?.description || "Hello, we're Omnifood, your premium food delivery companion. Skip the kitchen chores and enjoy super healthy, delicious chef-curated meals delivered straight to your door."}
               </p>
               
               {/* Search Bar Widget */}
@@ -139,41 +139,15 @@ const Home = () => {
           </div>
           
           <div className="row features-grid">
-            {/* Feature Card 1 */}
-            <div className="feature-card">
-              <div className="feature-icon-box">
-                <i className="ion-ios-infinite-outline"></i>
+            {(config?.homepage?.featuresList || []).filter(f => f.isActive !== false).map((feat, idx) => (
+              <div key={feat._id || idx} className="feature-card">
+                <div className="feature-icon-box">
+                  <i className={feat.icon || "ion-ios-infinite-outline"}></i>
+                </div>
+                <h3>{feat.title}</h3>
+                <p>{feat.description}</p>
               </div>
-              <h3>Up to 365 days/year</h3>
-              <p>Never cook again! Our flexible subscription plans include complete 365 days/year coverage. Scale up or pause anytime.</p>
-            </div>
-
-            {/* Feature Card 2 */}
-            <div className="feature-card">
-              <div className="feature-icon-box">
-                <i className="ion-ios-stopwatch-outline"></i>
-              </div>
-              <h3>Ready in 20 minutes</h3>
-              <p>You're only a few moments away from hot, fresh, and nutritious meals prepared locally and rushed straight to you.</p>
-            </div>
-
-            {/* Feature Card 3 */}
-            <div className="feature-card">
-              <div className="feature-icon-box">
-                <i className="ion-ios-nutrition-outline"></i>
-              </div>
-              <h3>100% organic &amp; fresh</h3>
-              <p>All vegetables, dairy, and meat are sourced daily from local sustainable farms. Hormone and antibiotic free.</p>
-            </div>
-
-            {/* Feature Card 4 */}
-            <div className="feature-card">
-              <div className="feature-icon-box">
-                <i className="ion-ios-cart-outline"></i>
-              </div>
-              <h3>Order anything</h3>
-              <p>No creative limits! Customize ingredients, search our massive menu database, or create specialized diet profiles.</p>
-            </div>
+            ))}
           </div>
         </section>
       )}
@@ -287,32 +261,15 @@ const Home = () => {
             </div>
             
             <div className="steps-list">
-              {/* Step 1 */}
-              <div className="works-step">
-                <div className="step-number">1</div>
-                <div>
-                  <h3>Choose your subscription plan</h3>
-                  <p>Select the subscription plan that fits your diet and schedule needs. Pause, resume, or edit parameters at any point.</p>
+              {(config?.homepage?.stepsList || []).filter(s => s.isActive !== false).sort((a,b) => a.stepNumber - b.stepNumber).map((step, idx) => (
+                <div key={step._id || idx} className="works-step">
+                  <div className="step-number">{step.stepNumber}</div>
+                  <div>
+                    <h3>{step.title}</h3>
+                    <p>{step.description}</p>
+                  </div>
                 </div>
-              </div>
-
-              {/* Step 2 */}
-              <div className="works-step">
-                <div className="step-number">2</div>
-                <div>
-                  <h3>Order using app or website</h3>
-                  <p>Pick custom configurations from our diverse food catalog. You can even set up recurring daily slots or scheduled times.</p>
-                </div>
-              </div>
-
-              {/* Step 3 */}
-              <div className="works-step">
-                <div className="step-number">3</div>
-                <div>
-                  <h3>Enjoy in under 20 minutes</h3>
-                  <p>Track your rider in real time with our live maps and dive into fresh, delicious gourmet food delivered directly to you.</p>
-                </div>
-              </div>
+              ))}
 
               <div className="app-buttons">
                 <a href="#" className="btn-app" onClick={(e) => e.preventDefault()}><img src="/static/img/download-app.svg" alt="Download on App Store" /></a>
@@ -331,93 +288,28 @@ const Home = () => {
           </div>
           
           <div className="row cities-grid">
-            {/* Lisbon */}
-            <div className="city-card">
-              <div className="city-image-container">
-                <img src="/static/img/lisbon-3.jpg" alt="Lisbon city views" />
-              </div>
-              <div className="city-details">
-                <h3>Lisbon</h3>
-                <div className="city-feature">
-                  <i className="ion-ios-person"></i>
-                  <span>1,600+ Happy Eaters</span>
+            {(config?.homepage?.citiesList || []).filter(c => c.isActive !== false).map((city, idx) => (
+              <div key={city._id || idx} className="city-card">
+                <div className="city-image-container">
+                  <img src={city.image || "/static/img/lisbon-3.jpg"} alt={city.name} />
                 </div>
-                <div className="city-feature">
-                  <i className="ion-ios-star"></i>
-                  <span>60+ Top Chefs</span>
-                </div>
-                <div className="city-feature">
-                  <i className="ion-social-twitter"></i>
-                  <a href="#twitter" onClick={(e) => e.preventDefault()}>@omnifood_lx</a>
-                </div>
-              </div>
-            </div>
-
-            {/* San Francisco */}
-            <div className="city-card">
-              <div className="city-image-container">
-                <img src="/static/img/san-francisco.jpg" alt="San Francisco cityscape" />
-              </div>
-              <div className="city-details">
-                <h3>San Francisco</h3>
-                <div className="city-feature">
-                  <i className="ion-ios-person"></i>
-                  <span>3,700+ Happy Eaters</span>
-                </div>
-                <div className="city-feature">
-                  <i className="ion-ios-star"></i>
-                  <span>160+ Top Chefs</span>
-                </div>
-                <div className="city-feature">
-                  <i className="ion-social-twitter"></i>
-                  <a href="#twitter" onClick={(e) => e.preventDefault()}>@omnifood_sf</a>
+                <div className="city-details">
+                  <h3>{city.name}</h3>
+                  <div className="city-feature">
+                    <i className="ion-ios-person"></i>
+                    <span>{city.eaters}</span>
+                  </div>
+                  <div className="city-feature">
+                    <i className="ion-ios-star"></i>
+                    <span>{city.chefs}</span>
+                  </div>
+                  <div className="city-feature">
+                    <i className="ion-social-twitter"></i>
+                    <a href="#twitter" onClick={(e) => e.preventDefault()}>{city.twitter}</a>
+                  </div>
                 </div>
               </div>
-            </div>
-
-            {/* Berlin */}
-            <div className="city-card">
-              <div className="city-image-container">
-                <img src="/static/img/berlin.jpg" alt="Berlin cityscape" />
-              </div>
-              <div className="city-details">
-                <h3>Berlin</h3>
-                <div className="city-feature">
-                  <i className="ion-ios-person"></i>
-                  <span>2,300+ Happy Eaters</span>
-                </div>
-                <div className="city-feature">
-                  <i className="ion-ios-star"></i>
-                  <span>110+ Top Chefs</span>
-                </div>
-                <div className="city-feature">
-                  <i className="ion-social-twitter"></i>
-                  <a href="#twitter" onClick={(e) => e.preventDefault()}>@omnifood_berlin</a>
-                </div>
-              </div>
-            </div>
-
-            {/* London */}
-            <div className="city-card">
-              <div className="city-image-container">
-                <img src="/static/img/london.jpg" alt="London cityscape" />
-              </div>
-              <div className="city-details">
-                <h3>London</h3>
-                <div className="city-feature">
-                  <i className="ion-ios-person"></i>
-                  <span>1,200+ Happy Eaters</span>
-                </div>
-                <div className="city-feature">
-                  <i className="ion-ios-star"></i>
-                  <span>50+ Top Chefs</span>
-                </div>
-                <div className="city-feature">
-                  <i className="ion-social-twitter"></i>
-                  <a href="#twitter" onClick={(e) => e.preventDefault()}>@omnifood_london</a>
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
         </section>
       )}
@@ -430,68 +322,26 @@ const Home = () => {
           </div>
           
           <div className="row testimonials-grid">
-            {/* Testimonial 1 */}
-            <div className="testimonial-card">
-              <div className="rating-stars">
-                <i className="ion-ios-star"></i>
-                <i className="ion-ios-star"></i>
-                <i className="ion-ios-star"></i>
-                <i className="ion-ios-star"></i>
-                <i className="ion-ios-star"></i>
+            {(config?.homepage?.testimonialsList || []).filter(t => t.isActive !== false).map((test, idx) => (
+              <div key={test._id || idx} className="testimonial-card">
+                <div className="rating-stars">
+                  {Array.from({ length: Math.floor(test.rating || 5) }).map((_, i) => (
+                    <i key={i} className="ion-ios-star"></i>
+                  ))}
+                  {(test.rating % 1 !== 0) && <i className="ion-ios-star-half"></i>}
+                </div>
+                <blockquote>
+                  "{test.quote}"
+                </blockquote>
+                <div className="testimonial-user">
+                  <img src={test.imageUrl || "/static/img/customer-1.jpg"} alt={test.name} />
+                  <cite>
+                    <span className="testimonial-user-name">{test.name}</span>
+                    <span className="testimonial-user-role">{test.role}</span>
+                  </cite>
+                </div>
               </div>
-              <blockquote>
-                "Omnifood is just awesome! I just launched a tech startup which leaves me with no time for cooking, so Omnifood is a complete lifesaver. Now that I got used to it, I couldn't live without my daily organic meals!"
-              </blockquote>
-              <div className="testimonial-user">
-                <img src="/static/img/customer-1.jpg" alt="Alberto Duncan profile photo" />
-                <cite>
-                  <span className="testimonial-user-name">Alberto Duncan</span>
-                  <span className="testimonial-user-role">Founder, TechSpace</span>
-                </cite>
-              </div>
-            </div>
-
-            {/* Testimonial 2 */}
-            <div className="testimonial-card">
-              <div className="rating-stars">
-                <i className="ion-ios-star"></i>
-                <i className="ion-ios-star"></i>
-                <i className="ion-ios-star"></i>
-                <i className="ion-ios-star"></i>
-                <i className="ion-ios-star"></i>
-              </div>
-              <blockquote>
-                "Inexpensive, healthy, and great-tasting meals delivered right to my workspace. We have lots of food delivery apps in Lisbon, but none comes even close to Omnifood. Me and my family are absolutely in love!"
-              </blockquote>
-              <div className="testimonial-user">
-                <img src="/static/img/customer-2.jpg" alt="Joana Silva profile photo" />
-                <cite>
-                  <span className="testimonial-user-name">Joana Silva</span>
-                  <span className="testimonial-user-role">Marketing Lead, Innovate</span>
-                </cite>
-              </div>
-            </div>
-
-            {/* Testimonial 3 */}
-            <div className="testimonial-card">
-              <div className="rating-stars">
-                <i className="ion-ios-star"></i>
-                <i className="ion-ios-star"></i>
-                <i className="ion-ios-star"></i>
-                <i className="ion-ios-star"></i>
-                <i className="ion-ios-star-half"></i>
-              </div>
-              <blockquote>
-                "I was looking for a quick, organic meal delivery service in San Francisco. I tried a lot of competitors and ended up selecting Omnifood. Easiest portal UI and best quality in the Bay Area. Highly recommended!"
-              </blockquote>
-              <div className="testimonial-user">
-                <img src="/static/img/customer-3.jpg" alt="Milton Chapman profile photo" />
-                <cite>
-                  <span className="testimonial-user-name">Milton Chapman</span>
-                  <span className="testimonial-user-role">Lead Engineer, DevCorp</span>
-                </cite>
-              </div>
-            </div>
+            ))}
           </div>
         </section>
       )}
@@ -522,70 +372,30 @@ const Home = () => {
           </div>
 
           <div className="row plans-grid">
-            {/* PREMIUM */}
-            <div className="plan-card">
-              <div className="plan-header">
-                <h3>PREMIUM</h3>
-                <div className="plan-price" id="premiumPrice">
-                  {isAnnualBilling ? '$319' : '$399'} <span>/ month</span>
+            {(config?.homepage?.plansList || []).filter(p => p.isActive !== false).map((plan, idx) => (
+              <div key={plan._id || idx} className={`plan-card ${plan.popular ? 'popular' : ''}`}>
+                {plan.popular && <span className="popular-tag">Best Value</span>}
+                <div className="plan-header">
+                  <h3>{plan.name}</h3>
+                  <div className="plan-price">
+                    {isAnnualBilling ? `$${Math.round(parseInt(plan.price) * 0.8)}` : `$${plan.price}`} <span>/ {plan.name === 'STARTER' ? 'meal' : 'month'}</span>
+                  </div>
+                  <p className="plan-price-meal">
+                    {isAnnualBilling && plan.name !== 'STARTER' ? `That's only $${(parseInt(plan.price) * 0.8 / 30).toFixed(2)} per meal` : plan.priceMeal}
+                  </p>
                 </div>
-                <p className="plan-price-meal" id="premiumPriceMeal">
-                  That's only {isAnnualBilling ? '$10.60' : '$13.30'} per meal
-                </p>
-              </div>
-              <ul className="plan-features">
-                <li><i className="ion-ios-checkmark-empty"></i> 1 meal every single day</li>
-                <li><i className="ion-ios-checkmark-empty"></i> Order delivery 24/7</li>
-                <li><i className="ion-ios-checkmark-empty"></i> Early access to new chef specials</li>
-                <li><i className="ion-ios-checkmark-empty"></i> 100% Free delivery</li>
-              </ul>
-              <div className="plan-action">
-                <Link to="/signup" className="btn btn-full">Choose Premium</Link>
-              </div>
-            </div>
-
-            {/* PRO */}
-            <div className="plan-card popular">
-              <span className="popular-tag">Best Value</span>
-              <div className="plan-header">
-                <h3>PRO</h3>
-                <div className="plan-price" id="proPrice">
-                  {isAnnualBilling ? '$119' : '$149'} <span>/ month</span>
+                <ul className="plan-features">
+                  {(plan.features || []).map((feat, fidx) => (
+                    <li key={fidx}>
+                      <i className={feat.toLowerCase().includes("no ") ? "ion-ios-close-empty" : "ion-ios-checkmark-empty"}></i> {feat}
+                    </li>
+                  ))}
+                </ul>
+                <div className="plan-action">
+                  <Link to="/signup" className={plan.name === 'STARTER' ? 'btn btn-ghost' : 'btn btn-full'}>Choose {plan.name}</Link>
                 </div>
-                <p className="plan-price-meal" id="proPriceMeal">
-                  That's only {isAnnualBilling ? '$11.90' : '$14.90'} per meal
-                </p>
               </div>
-              <ul className="plan-features">
-                <li><i className="ion-ios-checkmark-empty"></i> 1 meal 10 days/month</li>
-                <li><i className="ion-ios-checkmark-empty"></i> Order delivery 24/7</li>
-                <li><i className="ion-ios-checkmark-empty"></i> Access to organic recipe base</li>
-                <li><i className="ion-ios-checkmark-empty"></i> 100% Free delivery</li>
-              </ul>
-              <div className="plan-action">
-                <Link to="/signup" className="btn btn-full">Choose Pro</Link>
-              </div>
-            </div>
-
-            {/* STARTER */}
-            <div className="plan-card">
-              <div className="plan-header">
-                <h3>STARTER</h3>
-                <div className="plan-price" id="starterPrice">
-                  {isAnnualBilling ? '$15' : '$19'} <span>/ meal</span>
-                </div>
-                <p className="plan-price-meal" id="starterPriceMeal">&nbsp;</p>
-              </div>
-              <ul className="plan-features">
-                <li><i className="ion-ios-checkmark-empty"></i> Pay-per-order flexibility</li>
-                <li><i className="ion-ios-checkmark-empty"></i> Order from 8 am to 12 pm</li>
-                <li><i className="ion-ios-close-empty"></i> No early special access</li>
-                <li><i className="ion-ios-checkmark-empty"></i> Free delivery</li>
-              </ul>
-              <div className="plan-action">
-                <Link to="/signup" className="btn btn-ghost">Choose Starter</Link>
-              </div>
-            </div>
+            ))}
           </div>
         </section>
       )}
@@ -611,7 +421,7 @@ const Home = () => {
                     </div>
                     <div className="info-text">
                       <span>Call Us</span>
-                      <p>+1 (555) 019-2834</p>
+                      <p>{config?.homepage?.contact?.phone || "+1 (555) 019-2834"}</p>
                     </div>
                   </div>
 
@@ -621,7 +431,7 @@ const Home = () => {
                     </div>
                     <div className="info-text">
                       <span>Email Support</span>
-                      <p>hello@omnifood.com</p>
+                      <p>{config?.homepage?.contact?.email || "hello@omnifood.com"}</p>
                     </div>
                   </div>
                 </div>

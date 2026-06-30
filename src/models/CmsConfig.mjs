@@ -27,7 +27,53 @@ const cmsConfigSchema = new mongoose.Schema({
         showCities: { type: Boolean, default: true },
         showTestimonials: { type: Boolean, default: true },
         showPlans: { type: Boolean, default: true },
-        showContactForm: { type: Boolean, default: true }
+        showContactForm: { type: Boolean, default: true },
+        featuresList: [
+            {
+                title: { type: String },
+                description: { type: String },
+                icon: { type: String, default: "ion-ios-infinite-outline" },
+                isActive: { type: Boolean, default: true }
+            }
+        ],
+        stepsList: [
+            {
+                stepNumber: { type: Number },
+                title: { type: String },
+                description: { type: String },
+                isActive: { type: Boolean, default: true }
+            }
+        ],
+        citiesList: [
+            {
+                name: { type: String },
+                image: { type: String, default: "/static/img/lisbon-3.jpg" },
+                eaters: { type: String },
+                chefs: { type: String },
+                twitter: { type: String },
+                isActive: { type: Boolean, default: true }
+            }
+        ],
+        testimonialsList: [
+            {
+                name: { type: String },
+                role: { type: String },
+                quote: { type: String },
+                rating: { type: Number, default: 5 },
+                imageUrl: { type: String, default: "/static/img/customer-1.jpg" },
+                isActive: { type: Boolean, default: true }
+            }
+        ],
+        plansList: [
+            {
+                name: { type: String },
+                price: { type: String },
+                priceMeal: { type: String },
+                features: [{ type: String }],
+                popular: { type: Boolean, default: false },
+                isActive: { type: Boolean, default: true }
+            }
+        ]
     },
     // Website Settings
     website: {

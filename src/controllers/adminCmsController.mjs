@@ -23,6 +23,57 @@ export async function getCmsConfig(req, res) {
         let config = await CmsConfig.findOne({});
         if (!config) {
             config = new CmsConfig({});
+        }
+
+        let changed = false;
+        if (!config.homepage.featuresList || config.homepage.featuresList.length === 0) {
+            config.homepage.featuresList = [
+                { title: "Up to 365 days/year", description: "Never cook again! Our flexible subscription plans include complete 365 days/year coverage. Scale up or pause anytime.", icon: "ion-ios-infinite-outline", isActive: true },
+                { title: "Ready in 20 minutes", description: "You're only a few moments away from hot, fresh, and nutritious meals prepared locally and rushed straight to you.", icon: "ion-ios-stopwatch-outline", isActive: true },
+                { title: "100% organic & fresh", description: "All vegetables, dairy, and meat are sourced daily from local sustainable farms. Hormone and antibiotic free.", icon: "ion-ios-nutrition-outline", isActive: true },
+                { title: "Order anything", description: "No creative limits! Customize ingredients, search our massive menu database, or create specialized diet profiles.", icon: "ion-ios-cart-outline", isActive: true }
+            ];
+            changed = true;
+        }
+
+        if (!config.homepage.stepsList || config.homepage.stepsList.length === 0) {
+            config.homepage.stepsList = [
+                { stepNumber: 1, title: "Choose your subscription plan", description: "Select the subscription plan that fits your diet and schedule needs. Pause, resume, or edit parameters at any point.", isActive: true },
+                { stepNumber: 2, title: "Order using app or website", description: "Pick custom configurations from our diverse food catalog. You can even set up recurring daily slots or scheduled times.", isActive: true },
+                { stepNumber: 3, title: "Enjoy in under 20 minutes", description: "Track your rider in real time with our live maps and dive into fresh, delicious gourmet food delivered directly to you.", isActive: true }
+            ];
+            changed = true;
+        }
+
+        if (!config.homepage.citiesList || config.homepage.citiesList.length === 0) {
+            config.homepage.citiesList = [
+                { name: "Lisbon", image: "/static/img/lisbon-3.jpg", eaters: "1,600+ Happy Eaters", chefs: "60+ Top Chefs", twitter: "@omnifood_lx", isActive: true },
+                { name: "San Francisco", image: "/static/img/san-francisco.jpg", eaters: "3,700+ Happy Eaters", chefs: "160+ Top Chefs", twitter: "@omnifood_sf", isActive: true },
+                { name: "Berlin", image: "/static/img/berlin.jpg", eaters: "2,300+ Happy Eaters", chefs: "110+ Top Chefs", twitter: "@omnifood_berlin", isActive: true },
+                { name: "London", image: "/static/img/london.jpg", eaters: "1,200+ Happy Eaters", chefs: "50+ Top Chefs", twitter: "@omnifood_london", isActive: true }
+            ];
+            changed = true;
+        }
+
+        if (!config.homepage.testimonialsList || config.homepage.testimonialsList.length === 0) {
+            config.homepage.testimonialsList = [
+                { name: "Alberto Duncan", role: "Founder, TechSpace", quote: "Omnifood is just awesome! I just launched a tech startup which leaves me with no time for cooking, so Omnifood is a complete lifesaver. Now that I got used to it, I couldn't live without my daily organic meals!", rating: 5, imageUrl: "/static/img/customer-1.jpg", isActive: true },
+                { name: "Joana Silva", role: "Marketing Lead, Innovate", quote: "Inexpensive, healthy, and great-tasting meals delivered right to my workspace. We have lots of food delivery apps in Lisbon, but none comes even close to Omnifood. Me and my family are absolutely in love!", rating: 5, imageUrl: "/static/img/customer-2.jpg", isActive: true },
+                { name: "Milton Chapman", role: "Lead Engineer, DevCorp", quote: "I was looking for a quick, organic meal delivery service in San Francisco. I tried a lot of competitors and ended up selecting Omnifood. Easiest portal UI and best quality in the Bay Area. Highly recommended!", rating: 5, imageUrl: "/static/img/customer-3.jpg", isActive: true }
+            ];
+            changed = true;
+        }
+
+        if (!config.homepage.plansList || config.homepage.plansList.length === 0) {
+            config.homepage.plansList = [
+                { name: "PREMIUM", price: "399", priceMeal: "That's only $13.30 per meal", features: ["1 meal every single day", "Order delivery 24/7", "Early access to new chef specials", "100% Free delivery"], popular: false, isActive: true },
+                { name: "PRO", price: "149", priceMeal: "That's only $14.90 per meal", features: ["1 meal 10 days/month", "Order delivery 24/7", "Access to organic recipe base", "100% Free delivery"], popular: true, isActive: true },
+                { name: "STARTER", price: "19", priceMeal: "Pay-per-order flexibility", features: ["Pay-per-order flexibility", "Order from 8 am to 12 pm", "No early special access", "Free delivery"], popular: false, isActive: true }
+            ];
+            changed = true;
+        }
+
+        if (changed || !config._id) {
             await config.save();
         }
         res.json(config);
