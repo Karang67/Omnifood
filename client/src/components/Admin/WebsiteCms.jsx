@@ -78,13 +78,22 @@ const WebsiteCms = ({ activeTab }) => {
     const handleSaveListItem = async (listName, itemData, formReset) => {
         setAlert({ show: false, type: '', message: '' });
         try {
-            let updatedList = [...config.homepage[listName]];
+            let updatedList = [];
             if (itemData.id) {
                 // Edit mode
-                updatedList = updatedList.map(item => item._id === itemData.id ? { ...item, ...itemData } : item);
+                updatedList = config.homepage[listName].map(item => {
+                    const plainItem = item._doc ? { ...item._doc } : { ...item };
+                    if (plainItem._id === itemData.id) {
+                        const { id, ...rest } = itemData;
+                        return { ...plainItem, ...rest, _id: id };
+                    }
+                    return plainItem;
+                });
             } else {
                 // Add mode
-                updatedList.push(itemData);
+                updatedList = config.homepage[listName].map(item => item._doc ? { ...item._doc } : { ...item });
+                const { id, ...rest } = itemData;
+                updatedList.push(rest);
             }
 
             const updatedHomepage = { ...config.homepage, [listName]: updatedList };
@@ -107,7 +116,9 @@ const WebsiteCms = ({ activeTab }) => {
     const handleDeleteListItem = async (listName, itemId) => {
         if (!confirm('Remove this item?')) return;
         try {
-            const updatedList = config.homepage[listName].filter(item => item._id !== itemId);
+            const updatedList = config.homepage[listName]
+                .map(item => item._doc ? { ...item._doc } : { ...item })
+                .filter(item => item._id !== itemId);
             const updatedHomepage = { ...config.homepage, [listName]: updatedList };
             const res = await fetch('/api/admin/settings', {
                 method: 'PUT',
