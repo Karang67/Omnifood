@@ -27,7 +27,8 @@ const cmsConfigSchema = new mongoose.Schema({
         logoUrl: { type: String, default: "/static/img/logo.png" },
         faviconUrl: { type: String, default: "/static/img/logo.png" },
         currency: { type: String, default: "USD" },
-        timezone: { type: String, default: "America/New_York" }
+        timezone: { type: String, default: "America/New_York" },
+        maintenanceMode: { type: Boolean, default: false }
     },
     // Theme Settings
     theme: {

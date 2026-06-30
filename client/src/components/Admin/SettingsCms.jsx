@@ -102,6 +102,20 @@ const SettingsCms = ({ activeTab }) => {
                                 <option value="Europe/London">Greenwich Mean Time (GMT)</option>
                             </select>
                         </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(226, 55, 68, 0.05)', padding: '12px 16px', borderRadius: '8px', border: '1px solid rgba(226, 55, 68, 0.15)', marginTop: '10px' }}>
+                            <span style={{ color: '#ff7070', fontWeight: 600 }}>Enable Maintenance Mode</span>
+                            <label className="switch">
+                                <input 
+                                    type="checkbox" 
+                                    checked={config.website.maintenanceMode || false} 
+                                    onChange={(e) => setConfig({
+                                        ...config,
+                                        website: { ...config.website, maintenanceMode: e.target.checked }
+                                    })}
+                                />
+                                <span className="slider"></span>
+                            </label>
+                        </div>
                     </div>
 
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>

@@ -19,7 +19,7 @@ const FoodCms = ({ activeTab }) => {
     const [catForm, setCatForm] = useState({ name: '', description: '', displayOrder: 0, visibility: true });
     const [catFile, setCatFile] = useState(null);
 
-    const [foodForm, setFoodForm] = useState({ name: '', description: '', price: '', category: 'Signature', discount: 0, prepTime: 15, inventory: 50 });
+    const [foodForm, setFoodForm] = useState({ name: '', description: '', price: '', category: 'Signature', discount: 0, prepTime: 15, inventory: 50, availability: true, recommended: false, bestSeller: false });
     const [foodFile, setFoodFile] = useState(null);
 
     const [couponForm, setCouponForm] = useState({ code: '', discount: '', type: 'percentage', expiryDate: '', usageLimit: 100, minOrder: 15 });
@@ -127,13 +127,16 @@ const FoodCms = ({ activeTab }) => {
                     imageUrl,
                     discount: parseFloat(foodForm.discount) || 0,
                     prepTime: parseInt(foodForm.prepTime) || 15,
-                    inventory: parseInt(foodForm.inventory) || 50
+                    inventory: parseInt(foodForm.inventory) || 50,
+                    availability: foodForm.availability,
+                    recommended: foodForm.recommended,
+                    bestSeller: foodForm.bestSeller
                 })
             });
             const data = await res.json();
             if (data.success) {
                 setAlert({ show: true, type: 'alert-success', message: 'Food item added successfully!' });
-                setFoodForm({ name: '', description: '', price: '', category: 'Signature', discount: 0, prepTime: 15, inventory: 50 });
+                setFoodForm({ name: '', description: '', price: '', category: 'Signature', discount: 0, prepTime: 15, inventory: 50, availability: true, recommended: false, bestSeller: false });
                 setFoodFile(null);
                 fetchFoods();
             }
@@ -302,6 +305,31 @@ const FoodCms = ({ activeTab }) => {
                         <div className="form-group">
                             <label>Food Image</label>
                             <input type="file" className="form-control" accept="image/*" onChange={(e) => setFoodFile(e.target.files[0])} />
+                        </div>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
+                            <div className="form-group">
+                                <label>Discount ($)</label>
+                                <input type="number" step="0.01" className="form-control" value={foodForm.discount} onChange={(e) => setFoodForm({ ...foodForm, discount: e.target.value })} />
+                            </div>
+                            <div className="form-group">
+                                <label>Prep Time (mins)</label>
+                                <input type="number" className="form-control" value={foodForm.prepTime} onChange={(e) => setFoodForm({ ...foodForm, prepTime: e.target.value })} />
+                            </div>
+                        </div>
+
+                        <div style={{ display: 'flex', gap: '15px', margin: '5px 0 15px' }}>
+                            <label style={{ color: '#fff', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
+                                <input type="checkbox" checked={foodForm.availability} onChange={(e) => setFoodForm({ ...foodForm, availability: e.target.checked })} />
+                                In Stock
+                            </label>
+                            <label style={{ color: '#fff', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
+                                <input type="checkbox" checked={foodForm.recommended} onChange={(e) => setFoodForm({ ...foodForm, recommended: e.target.checked })} />
+                                Recommended
+                            </label>
+                            <label style={{ color: '#fff', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
+                                <input type="checkbox" checked={foodForm.bestSeller} onChange={(e) => setFoodForm({ ...foodForm, bestSeller: e.target.checked })} />
+                                Best Seller
+                            </label>
                         </div>
                         <button type="submit" className="btn-submit">Add Food Item</button>
                     </form>

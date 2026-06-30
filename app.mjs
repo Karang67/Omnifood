@@ -45,6 +45,57 @@ app.use((req, res, next) => {
 
 // Middlewares
 app.use(cookieParser());
+
+// Dynamic Platform Maintenance Check
+app.use(async (req, res, next) => {
+    if (
+        req.path.startsWith("/static") || 
+        req.path.startsWith("/api/admin") || 
+        req.path.startsWith("/api/auth") || 
+        req.path.startsWith("/admin") ||
+        req.path.startsWith("/login") ||
+        req.path.startsWith("/access-denied")
+    ) {
+        return next();
+    }
+    try {
+        const CmsConfig = (await import("./src/models/CmsConfig.mjs")).default;
+        const configObj = await CmsConfig.findOne({});
+        if (configObj && configObj.website && configObj.website.maintenanceMode) {
+            const token = req.cookies.token;
+            if (token) {
+                try {
+                    const jwt = (await import("jsonwebtoken")).default;
+                    const decoded = jwt.verify(token, process.env.JWT_SECRET || "super_secret_omnifood_key_12345");
+                    if (decoded.role === "super_admin") {
+                        return next();
+                    }
+                } catch (e) {}
+            }
+            return res.status(503).send(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Platform Maintenance</title>
+                    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700&display=swap" rel="stylesheet">
+                    <style>
+                        body { background: #0b0f19; color: #fff; font-family: 'Outfit', sans-serif; text-align: center; padding: 120px 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 80vh; }
+                        h1 { color: #e23744; font-size: 2.8rem; margin: 0 0 16px; font-weight: 800; }
+                        p { color: rgba(255,255,255,0.7); font-size: 1.1rem; line-height: 1.6; max-width: 500px; margin: 0; }
+                    </style>
+                </head>
+                <body>
+                    <h1>Under Scheduled Maintenance</h1>
+                    <p>We are currently upgrading the Omnifood servers to introduce fresh gourmet menus. We'll be back shortly!</p>
+                </body>
+                </html>
+            `);
+        }
+    } catch (err) {
+        console.error("Maintenance middleware crash:", err.message);
+    }
+    next();
+});
 app.use(bodyParser.urlencoded({ limit: "10mb", extended: true }));
 app.use(express.json({ limit: "10mb" }));
 app.use('/static', express.static(path.join(__dirname, 'static')));
