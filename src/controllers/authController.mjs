@@ -9,7 +9,7 @@ export function hashPassword(password) {
 function generateTokenAndSetCookie(res, user) {
     const token = jwt.sign(
         { id: user._id, email: user.email, role: user.role, name: user.name },
-        process.env.JWT_SECRET || "super_secret_omnifood_key_12345",
+        process.env.JWT_SECRET,
         { expiresIn: "1d" }
     );
     

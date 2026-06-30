@@ -9,7 +9,7 @@ export function authenticateJWT(req, res, next) {
     }
     
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || "super_secret_omnifood_key_12345");
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
         req.user = decoded; // Contains id, email, role, name
         next();
     } catch (error) {

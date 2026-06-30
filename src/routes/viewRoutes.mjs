@@ -22,9 +22,10 @@ const serveFrontend = (req, res) => {
 };
 
 const paths = [
-    "/", "/contact-page", "/signup-page", "/login-page", "/menu", 
-    "/admin", "/delivery", "/track/:orderId", "/about", "/press", 
-    "/careers", "/support", "/safety", "/terms", "/privacy", "/profile"
+    "/", "/menu", "/login", "/signup",
+    "/admin", "/delivery", "/track/:orderId", "/about", "/press",
+    "/careers", "/support", "/safety", "/terms", "/privacy", "/profile",
+    "/contact"
 ];
 
 paths.forEach(p => {
