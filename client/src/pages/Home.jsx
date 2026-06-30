@@ -58,42 +58,48 @@ const Home = () => {
               </p>
               
               {/* Search Bar Widget */}
-              <form onSubmit={handleSearchSubmit} className="hero-search-container">
-                <div className="search-loc-picker">
-                  <i className="ion-ios-location"></i>
-                  <select 
-                    id="locationSelect" 
-                    aria-label="Choose your city location"
-                    value={selectedCity}
-                    onChange={(e) => setSelectedCity(e.target.value)}
-                  >
-                    <option value="delhi">Delhi NCR</option>
-                    <option value="lisbon">Lisbon</option>
-                    <option value="sf">San Francisco</option>
-                    <option value="berlin">Berlin</option>
-                    <option value="london">London</option>
-                  </select>
-                </div>
-                <div className="search-input-wrapper">
-                  <i className="ion-ios-search-strong"></i>
-                  <input 
-                    type="text" 
-                    id="foodSearchInput" 
-                    placeholder="Search for sushi, burgers, tacos..." 
-                    aria-label="Search food catalog"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
-                </div>
-                <button type="submit" className="btn-search" id="heroSearchBtn">Search</button>
-              </form>
+              {(!config || config.homepage.showHeroSearch !== false) && (
+                <form onSubmit={handleSearchSubmit} className="hero-search-container">
+                  <div className="search-loc-picker">
+                    <i className="ion-ios-location"></i>
+                    <select 
+                      id="locationSelect" 
+                      aria-label="Choose your city location"
+                      value={selectedCity}
+                      onChange={(e) => setSelectedCity(e.target.value)}
+                    >
+                      <option value="delhi">Delhi NCR</option>
+                      <option value="lisbon">Lisbon</option>
+                      <option value="sf">San Francisco</option>
+                      <option value="berlin">Berlin</option>
+                      <option value="london">London</option>
+                    </select>
+                  </div>
+                  <div className="search-input-wrapper">
+                    <i className="ion-ios-search-strong"></i>
+                    <input 
+                      type="text" 
+                      id="foodSearchInput" 
+                      placeholder="Search for sushi, burgers, tacos..." 
+                      aria-label="Search food catalog"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                  </div>
+                  <button type="submit" className="btn-search" id="heroSearchBtn">Search</button>
+                </form>
+              )}
 
               <div className="hero-cta-buttons">
-                <a className="btn btn-full" href="#plans" onClick={(e) => {
-                  e.preventDefault();
-                  document.getElementById('plans').scrollIntoView({ behavior: 'smooth' });
-                }}>Get Started</a>
-                <Link className="btn btn-ghost" to="/menu">Explore Menu</Link>
+                {(!config || config.homepage.showHeroCta1 !== false) && (
+                  <a className="btn btn-full" href="#plans" onClick={(e) => {
+                    e.preventDefault();
+                    document.getElementById('plans').scrollIntoView({ behavior: 'smooth' });
+                  }}>Get Started</a>
+                )}
+                {(!config || config.homepage.showHeroCta2 !== false) && (
+                  <Link className="btn btn-ghost" to="/menu">Explore Menu</Link>
+                )}
               </div>
             </div>
 
@@ -103,26 +109,30 @@ const Home = () => {
               <img src="/static/img/delivery_rider.png" alt="Omnifood Delivery Partner Riding Scooter" className="hero-rider-img" />
               
               {/* Badge 1 */}
-              <div className="floating-badge badge-1">
-                <div className="badge-icon-circle">
-                  <i className="ion-ios-stopwatch-outline"></i>
+              {(!config || config.homepage.showHeroBadge1 !== false) && (
+                <div className="floating-badge badge-1">
+                  <div className="badge-icon-circle">
+                    <i className="ion-ios-stopwatch-outline"></i>
+                  </div>
+                  <div className="badge-text">
+                    <span>Delivery Speed</span>
+                    <strong>⚡ 20 Mins</strong>
+                  </div>
                 </div>
-                <div className="badge-text">
-                  <span>Delivery Speed</span>
-                  <strong>⚡ 20 Mins</strong>
-                </div>
-              </div>
+              )}
 
               {/* Badge 2 */}
-              <div className="floating-badge badge-2">
-                <div className="badge-icon-circle">
-                  <i className="ion-ios-star"></i>
+              {(!config || config.homepage.showHeroBadge2 !== false) && (
+                <div className="floating-badge badge-2">
+                  <div className="badge-icon-circle">
+                    <i className="ion-ios-star"></i>
+                  </div>
+                  <div className="badge-text">
+                    <span>Customer Rating</span>
+                    <strong>⭐ 4.9 Rated</strong>
+                  </div>
                 </div>
-                <div className="badge-text">
-                  <span>Customer Rating</span>
-                  <strong>⭐ 4.9 Rated</strong>
-                </div>
-              </div>
+              )}
             </div>
           </div>
         </header>
@@ -162,15 +172,17 @@ const Home = () => {
             </p>
           </div>
 
-          <div className="row">
-            <div className="categories-chips">
-              <Link to="/menu" className="category-chip active">All Categories</Link>
-              <Link to="/menu" className="category-chip">Signature</Link>
-              <Link to="/menu" className="category-chip">Healthy</Link>
-              <Link to="/menu" className="category-chip">Premium</Link>
-              <Link to="/menu" className="category-chip">Starters</Link>
+          {(!config || config.homepage.showMealCategories !== false) && (
+            <div className="row">
+              <div className="categories-chips">
+                <Link to="/menu" className="category-chip active">All Categories</Link>
+                <Link to="/menu" className="category-chip">Signature</Link>
+                <Link to="/menu" className="category-chip">Healthy</Link>
+                <Link to="/menu" className="category-chip">Premium</Link>
+                <Link to="/menu" className="category-chip">Starters</Link>
+              </div>
             </div>
-          </div>
+          )}
 
           <div className="row meals-grid">
             {/* Meal Card 1 */}
@@ -242,9 +254,11 @@ const Home = () => {
             </div>
           </div>
           
-          <div className="row" style={{ textAlign: 'center', marginTop: '40px' }}>
-            <Link className="btn btn-full" to="/menu">Browse Complete Menu &rarr;</Link>
-          </div>
+          {(!config || config.homepage.showBrowseMenuBtn !== false) && (
+            <div className="row" style={{ textAlign: 'center', marginTop: '40px' }}>
+              <Link className="btn btn-full" to="/menu">Browse Complete Menu &rarr;</Link>
+            </div>
+          )}
         </section>
       )}
 
@@ -271,10 +285,12 @@ const Home = () => {
                 </div>
               ))}
 
-              <div className="app-buttons">
-                <a href="#" className="btn-app" onClick={(e) => e.preventDefault()}><img src="/static/img/download-app.svg" alt="Download on App Store" /></a>
-                <a href="#" className="btn-app" onClick={(e) => e.preventDefault()}><img src="/static/img/download-app-android.png" alt="Download on Play Store" /></a>
-              </div>
+              {(!config || config.homepage.showAppButtons !== false) && (
+                <div className="app-buttons">
+                  <a href="#" className="btn-app" onClick={(e) => e.preventDefault()}><img src="/static/img/download-app.svg" alt="Download on App Store" /></a>
+                  <a href="#" className="btn-app" onClick={(e) => e.preventDefault()}><img src="/static/img/download-app-android.png" alt="Download on Play Store" /></a>
+                </div>
+              )}
             </div>
           </div>
         </section>
@@ -355,21 +371,23 @@ const Home = () => {
           </div>
 
           {/* Pricing toggle slider */}
-          <div className="plans-toggle-container">
-            <span id="monthlyToggleLabel" className={!isAnnualBilling ? 'toggle-label-active' : ''}>Monthly Billing</span>
-            <label className="plans-switch">
-              <input 
-                type="checkbox" 
-                id="billingToggle"
-                checked={isAnnualBilling}
-                onChange={() => setIsAnnualBilling(!isAnnualBilling)}
-              />
-              <span className="plans-slider"></span>
-            </label>
-            <span id="annualToggleLabel" className={isAnnualBilling ? 'toggle-label-active' : ''}>
-              Annual Billing <span className="discount-badge">Save 20%</span>
-            </span>
-          </div>
+          {(!config || config.homepage.showPlansToggle !== false) && (
+            <div className="plans-toggle-container">
+              <span id="monthlyToggleLabel" className={!isAnnualBilling ? 'toggle-label-active' : ''}>Monthly Billing</span>
+              <label className="plans-switch">
+                <input 
+                  type="checkbox" 
+                  id="billingToggle"
+                  checked={isAnnualBilling}
+                  onChange={() => setIsAnnualBilling(!isAnnualBilling)}
+                />
+                <span className="plans-slider"></span>
+              </label>
+              <span id="annualToggleLabel" className={isAnnualBilling ? 'toggle-label-active' : ''}>
+                Annual Billing <span className="discount-badge">Save 20%</span>
+              </span>
+            </div>
+          )}
 
           <div className="row plans-grid">
             {(config?.homepage?.plansList || []).filter(p => p.isActive !== false).map((plan, idx) => (

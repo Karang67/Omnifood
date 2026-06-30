@@ -144,6 +144,48 @@ const SettingsCms = ({ activeTab }) => {
                                 <span className="slider"></span>
                             </label>
                         </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.03)', padding: '12px 16px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.06)', marginTop: '10px' }}>
+                            <span style={{ color: '#fff', fontWeight: 500 }}>Disable Customer Profile Page</span>
+                            <label className="switch">
+                                <input 
+                                    type="checkbox" 
+                                    checked={config.website.disableProfilePage || false} 
+                                    onChange={(e) => setConfig({
+                                        ...config,
+                                        website: { ...config.website, disableProfilePage: e.target.checked }
+                                    })}
+                                />
+                                <span className="slider"></span>
+                            </label>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.03)', padding: '12px 16px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.06)', marginTop: '10px' }}>
+                            <span style={{ color: '#fff', fontWeight: 500 }}>Disable Super Admin Panel</span>
+                            <label className="switch">
+                                <input 
+                                    type="checkbox" 
+                                    checked={config.website.disableAdminPage || false} 
+                                    onChange={(e) => setConfig({
+                                        ...config,
+                                        website: { ...config.website, disableAdminPage: e.target.checked }
+                                    })}
+                                />
+                                <span className="slider"></span>
+                            </label>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.03)', padding: '12px 16px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.06)', marginTop: '10px' }}>
+                            <span style={{ color: '#fff', fontWeight: 500 }}>Disable Rider Dashboard</span>
+                            <label className="switch">
+                                <input 
+                                    type="checkbox" 
+                                    checked={config.website.disableDeliveryPage || false} 
+                                    onChange={(e) => setConfig({
+                                        ...config,
+                                        website: { ...config.website, disableDeliveryPage: e.target.checked }
+                                    })}
+                                />
+                                <span className="slider"></span>
+                            </label>
+                        </div>
                     </div>
 
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>

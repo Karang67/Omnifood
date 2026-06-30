@@ -28,6 +28,15 @@ const cmsConfigSchema = new mongoose.Schema({
         showTestimonials: { type: Boolean, default: true },
         showPlans: { type: Boolean, default: true },
         showContactForm: { type: Boolean, default: true },
+        showHeroSearch: { type: Boolean, default: true },
+        showHeroBadge1: { type: Boolean, default: true },
+        showHeroBadge2: { type: Boolean, default: true },
+        showHeroCta1: { type: Boolean, default: true },
+        showHeroCta2: { type: Boolean, default: true },
+        showMealCategories: { type: Boolean, default: true },
+        showBrowseMenuBtn: { type: Boolean, default: true },
+        showAppButtons: { type: Boolean, default: true },
+        showPlansToggle: { type: Boolean, default: true },
         featuresList: [
             {
                 title: { type: String },
@@ -85,7 +94,10 @@ const cmsConfigSchema = new mongoose.Schema({
         maintenanceMode: { type: Boolean, default: false },
         disableMenuPage: { type: Boolean, default: false },
         disableCartPage: { type: Boolean, default: false },
-        disableCheckoutPage: { type: Boolean, default: false }
+        disableCheckoutPage: { type: Boolean, default: false },
+        disableProfilePage: { type: Boolean, default: false },
+        disableAdminPage: { type: Boolean, default: false },
+        disableDeliveryPage: { type: Boolean, default: false }
     },
     // Theme Settings
     theme: {

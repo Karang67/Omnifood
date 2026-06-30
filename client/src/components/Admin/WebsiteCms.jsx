@@ -258,6 +258,34 @@ const WebsiteCms = ({ activeTab }) => {
                         ))}
                     </div>
 
+                    <h3 style={{ borderTop: '1px dashed rgba(255,255,255,0.1)', paddingTop: '15px', color: '#fff', fontSize: '1.05rem', margin: 0 }}>Granular Sub-Component Toggles</h3>
+                    <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.85rem', margin: 0 }}>Toggle micro-elements, buttons, and badges on the landing page:</p>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', background: 'rgba(255,255,255,0.02)', padding: '16px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.06)' }}>
+                        {[
+                            { key: 'showHeroSearch', label: 'Hero: Location & Food Search Bar' },
+                            { key: 'showHeroBadge1', label: 'Hero: 20 Mins floating badge' },
+                            { key: 'showHeroBadge2', label: 'Hero: 4.9 Rated floating badge' },
+                            { key: 'showHeroCta1', label: 'Hero: Get Started CTA button' },
+                            { key: 'showHeroCta2', label: 'Hero: Explore Menu button' },
+                            { key: 'showMealCategories', label: 'Meals: Categories chips filter bar' },
+                            { key: 'showBrowseMenuBtn', label: 'Meals: Complete Menu CTA button' },
+                            { key: 'showAppButtons', label: 'How it Works: App Store download buttons' },
+                            { key: 'showPlansToggle', label: 'Plans: Billing monthly/annual switch' }
+                        ].map(sec => (
+                            <label key={sec.key} style={{ color: '#fff', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                                <input 
+                                    type="checkbox" 
+                                    checked={config.homepage[sec.key] !== false} 
+                                    onChange={(e) => setConfig({
+                                        ...config,
+                                        homepage: { ...config.homepage, [sec.key]: e.target.checked }
+                                    })}
+                                />
+                                {sec.label}
+                            </label>
+                        ))}
+                    </div>
+
                     <button type="submit" className="btn-submit" style={{ width: 'fit-content', padding: '12px 30px', marginTop: '10px' }}>Save Homepage Config</button>
                 </form>
             )}

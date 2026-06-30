@@ -69,16 +69,24 @@ const App = () => {
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
               <Route path="/verify-email" element={<VerifyEmail />} />
-              <Route path="/profile" element={<Profile />} />
+              <Route path="/profile" element={
+                <PageGuard disabledFlag="disableProfilePage">
+                  <Profile />
+                </PageGuard>
+              } />
               <Route path="/admin" element={
-                <ProtectedRoute allowedRoles={['super_admin']}>
-                  <AdminDashboard />
-                </ProtectedRoute>
+                <PageGuard disabledFlag="disableAdminPage">
+                  <ProtectedRoute allowedRoles={['super_admin']}>
+                    <AdminDashboard />
+                  </ProtectedRoute>
+                </PageGuard>
               } />
               <Route path="/delivery" element={
-                <ProtectedRoute allowedRoles={['rider', 'super_admin']}>
-                  <RiderDashboard />
-                </ProtectedRoute>
+                <PageGuard disabledFlag="disableDeliveryPage">
+                  <ProtectedRoute allowedRoles={['rider', 'super_admin']}>
+                    <RiderDashboard />
+                  </ProtectedRoute>
+                </PageGuard>
               } />
               <Route path="/track/:orderId" element={<TrackOrder />} />
               <Route path="/access-denied" element={<AccessDenied />} />
