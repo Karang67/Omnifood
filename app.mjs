@@ -21,11 +21,28 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const port = process.env.PORT || 9000;
 
+// Enforce secure JWT fallback checking in production
+if (process.env.NODE_ENV === "production" && !process.env.JWT_SECRET) {
+    console.error("CRITICAL SECURITY ERROR: JWT_SECRET must be set in production mode!");
+    process.exit(1);
+}
+
+// Security Headers Middleware
+app.use((req, res, next) => {
+    res.setHeader("X-Content-Type-Options", "nosniff");
+    res.setHeader("X-Frame-Options", "DENY");
+    res.setHeader("X-XSS-Protection", "1; mode=block");
+    res.setHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
+    res.setHeader("Content-Security-Policy", "default-src 'self' https://unpkg.com https://fonts.googleapis.com https://fonts.gstatic.com; img-src 'self' data: https://unpkg.com https://*.openstreetmap.org; style-src 'self' 'unsafe-inline' https://unpkg.com https://fonts.googleapis.com; script-src 'self' 'unsafe-inline' https://unpkg.com https://cdn.jsdelivr.net; font-src 'self' https://unpkg.com https://fonts.gstatic.com; connect-src 'self'");
+    next();
+});
+
 // Middlewares
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ limit: "10mb", extended: true }));
 app.use(express.json({ limit: "10mb" }));
 app.use('/static', express.static(path.join(__dirname, 'static')));
+app.use(express.static(path.join(__dirname, 'client/dist')));
 
 // Mount MVC Routers
 app.use("/api/auth", authRoutes); // Authentication APIs

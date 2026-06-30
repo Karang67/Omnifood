@@ -1,0 +1,5 @@
+/* Custom base variables or empty overrides to ensure vanilla stylesheets render layout correctly */
+body {
+  margin: 0;
+  padding: 0;
+}

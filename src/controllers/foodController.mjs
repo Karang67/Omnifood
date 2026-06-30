@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import FoodItem from "../models/FoodItem.mjs";
 
 export async function getFoodItems(req, res) {
@@ -30,6 +31,9 @@ export async function addFoodItem(req, res) {
 }
 
 export async function deleteFoodItem(req, res) {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+        return res.status(400).json({ success: false, message: "Invalid food item ID format." });
+    }
     try {
         const deleted = await FoodItem.findByIdAndDelete(req.params.id);
         if (!deleted) return res.status(404).json({ success: false, message: "Food item not found." });

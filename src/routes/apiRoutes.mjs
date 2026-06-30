@@ -24,7 +24,8 @@ import {
     getSurgeZones,
     updateSurgeZone,
     getFleetAnalytics,
-    submitLegacyContact 
+    submitLegacyContact,
+    getCustomerOrders
 } from "../controllers/orderController.mjs";
 import { authenticateJWT, authorizeRoles } from "../middlewares/authMiddleware.mjs";
 
@@ -34,6 +35,7 @@ const router = express.Router();
 router.get("/api/food", getFoodItems);
 router.post("/api/order/place", placeOrder);
 router.get("/api/order/:orderId", getOrderById);
+router.get("/api/orders/customer/:email", getCustomerOrders);
 
 // 2. Delivery Partner / Rider APIs (requires "delivery" or "admin" roles)
 router.get("/api/delivery/orders/:partnerId", authenticateJWT, authorizeRoles("delivery", "admin"), getPartnerOrders);

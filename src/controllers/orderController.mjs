@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Order from "../models/Order.mjs";
 import User from "../models/User.mjs";
 import Contact from "../models/Contact.mjs";
@@ -27,7 +28,7 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
 
 // 1. CUSTOMER: Place Order with Logistics Geolocation & Dynamic Payout
 export async function placeOrder(req, res) {
-    const { customerName, email, phone, address, items, totalAmount } = req.body;
+    const { customerName, email, phone, address, items, totalAmount, paymentMethod, paymentStatus } = req.body;
     if (!customerName || !email || !phone || !address || !items || !totalAmount) {
         return res.status(400).json({ success: false, message: "All order details are required." });
     }
@@ -74,7 +75,9 @@ export async function placeOrder(req, res) {
                 shopLng,
                 customerLat,
                 customerLng
-            }
+            },
+            paymentMethod: paymentMethod || "COD",
+            paymentStatus: paymentStatus || "Pending"
         });
         
         // If Auto-Assignment dispatch algorithm is enabled, search for nearest driver
@@ -107,6 +110,9 @@ export async function placeOrder(req, res) {
 
 // 2. GET Order by ID (Customer order tracker)
 export async function getOrderById(req, res) {
+    if (!mongoose.Types.ObjectId.isValid(req.params.orderId)) {
+        return res.status(400).json({ success: false, message: "Invalid order ID format." });
+    }
     try {
         const order = await Order.findById(req.params.orderId).populate("deliveryPartner", "name email phone lat lng speed");
         if (!order) return res.status(404).json({ success: false, message: "Order not found." });
@@ -160,6 +166,9 @@ export async function assignDeliveryPartner(req, res) {
 
 // 6. RIDER: Get Assigned Tasks
 export async function getPartnerOrders(req, res) {
+    if (!mongoose.Types.ObjectId.isValid(req.params.partnerId)) {
+        return res.status(400).json({ success: false, message: "Invalid partner ID format." });
+    }
     try {
         const orders = await Order.find({ deliveryPartner: req.params.partnerId }).sort({ date: -1 });
         res.json(orders);
@@ -171,6 +180,9 @@ export async function getPartnerOrders(req, res) {
 // 7. RIDER: Accept Order Pop-up Alert
 export async function acceptRiderOrder(req, res) {
     const { orderId, partnerId } = req.body;
+    if (!mongoose.Types.ObjectId.isValid(orderId) || !mongoose.Types.ObjectId.isValid(partnerId)) {
+        return res.status(400).json({ success: false, message: "Invalid ID format." });
+    }
     try {
         const order = await Order.findById(orderId);
         if (!order) return res.status(404).json({ success: false, message: "Order not found." });
@@ -516,5 +528,15 @@ export async function submitLegacyContact(req, res) {
             <h1>Something went wrong. Please try again.</h1>
             <p>${error.message}</p>
         `);
+    }
+}
+
+// 23. CUSTOMER: Fetch orders placed by this customer (email match)
+export async function getCustomerOrders(req, res) {
+    try {
+        const orders = await Order.find({ email: req.params.email }).sort({ date: -1 });
+        res.json(orders);
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
     }
 }

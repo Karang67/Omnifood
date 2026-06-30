@@ -13,6 +13,8 @@ const orderSchema = new mongoose.Schema({
     totalAmount: { type: Number, required: true },
     status: { type: String, enum: ["Placed", "Preparing", "Out for Delivery", "Delivered"], default: "Placed" },
     deliveryPartner: { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null },
+    paymentMethod: { type: String, enum: ["Card", "UPI", "COD"], default: "COD" },
+    paymentStatus: { type: String, enum: ["Pending", "Completed", "Failed"], default: "Pending" },
     
     // Logistics parameters
     distance: { type: Number, default: 0 }, // in km
