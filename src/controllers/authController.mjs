@@ -1,15 +1,21 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../models/User.mjs";
+import PendingUser from "../models/PendingUser.mjs";
+import { sendOtpEmail } from "../utils/emailService.mjs";
 
 export function hashPassword(password) {
     return bcrypt.hashSync(password, 10);
 }
 
+function generateOtp() {
+    return Math.floor(100000 + Math.random() * 900000).toString();
+}
+
 function generateTokenAndSetCookie(res, user) {
     const token = jwt.sign(
         { id: user._id, email: user.email, role: user.role, name: user.name },
-        process.env.JWT_SECRET,
+        process.env.JWT_SECRET || "super_secret_omnifood_key_12345",
         { expiresIn: "1d" }
     );
     
@@ -27,31 +33,106 @@ export async function signup(req, res) {
         return res.status(400).json({ success: false, message: "Name, email, and password are required." });
     }
     try {
+        // Check if email already registered as an active user
         const existingUser = await User.findOne({ email: email.toLowerCase() });
         if (existingUser) {
             return res.status(400).json({ success: false, message: "Email is already registered." });
         }
-        
-        const hashedPassword = hashPassword(password);
-        const newUser = new User({
-            name,
-            email: email.toLowerCase(),
-            password: hashedPassword,
-            phone: phone || "",
-            address: address || "",
-            role: role || "customer"
-        });
-        
-        await newUser.save();
-        generateTokenAndSetCookie(res, newUser);
-        
+
+        const otp = generateOtp();
+        const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+        const passwordHash = hashPassword(password);
+
+        // Upsert: replace any existing pending verification for this email
+        await PendingUser.findOneAndUpdate(
+            { email: email.toLowerCase() },
+            { name, email: email.toLowerCase(), passwordHash, phone: phone || "", address: address || "", role: role || "customer", otp, otpExpiry },
+            { upsert: true, new: true }
+        );
+
+        // Send OTP email
+        await sendOtpEmail(email, name, otp);
+
         res.json({
             success: true,
-            message: "Account created successfully!",
-            user: { id: newUser._id, name: newUser.name, email: newUser.email, role: newUser.role, phone: newUser.phone, address: newUser.address }
+            requiresVerification: true,
+            message: "Verification code sent to your email!",
+            email: email.toLowerCase()
         });
     } catch (error) {
         console.error("Signup error:", error.message);
+        res.status(500).json({ success: false, message: "Something went wrong. Please try again." });
+    }
+}
+
+export async function verifyOtp(req, res) {
+    const { email, otp } = req.body;
+    if (!email || !otp) {
+        return res.status(400).json({ success: false, message: "Email and OTP are required." });
+    }
+    try {
+        const pending = await PendingUser.findOne({ email: email.toLowerCase() });
+
+        if (!pending) {
+            return res.status(400).json({ success: false, message: "No pending verification found. Please sign up again." });
+        }
+        if (new Date() > pending.otpExpiry) {
+            await PendingUser.deleteOne({ email: email.toLowerCase() });
+            return res.status(400).json({ success: false, message: "OTP has expired. Please sign up again." });
+        }
+        if (pending.otp !== otp.trim()) {
+            return res.status(400).json({ success: false, message: "Invalid OTP. Please try again." });
+        }
+
+        // Create the real user
+        const newUser = new User({
+            name: pending.name,
+            email: pending.email,
+            password: pending.passwordHash,
+            phone: pending.phone,
+            address: pending.address,
+            role: pending.role
+        });
+        await newUser.save();
+
+        // Clean up pending record
+        await PendingUser.deleteOne({ email: email.toLowerCase() });
+
+        generateTokenAndSetCookie(res, newUser);
+
+        res.json({
+            success: true,
+            message: "Email verified! Account created successfully.",
+            user: { id: newUser._id, name: newUser.name, email: newUser.email, role: newUser.role, phone: newUser.phone, address: newUser.address }
+        });
+    } catch (error) {
+        console.error("OTP verification error:", error.message);
+        res.status(500).json({ success: false, message: "Something went wrong. Please try again." });
+    }
+}
+
+export async function resendOtp(req, res) {
+    const { email } = req.body;
+    if (!email) {
+        return res.status(400).json({ success: false, message: "Email is required." });
+    }
+    try {
+        const pending = await PendingUser.findOne({ email: email.toLowerCase() });
+        if (!pending) {
+            return res.status(400).json({ success: false, message: "No pending verification found. Please sign up again." });
+        }
+
+        const otp = generateOtp();
+        const otpExpiry = new Date(Date.now() + 10 * 60 * 1000);
+        pending.otp = otp;
+        pending.otpExpiry = otpExpiry;
+        await pending.save();
+
+        await sendOtpEmail(pending.email, pending.name, otp);
+
+        res.json({ success: true, message: "A new verification code has been sent to your email." });
+    } catch (error) {
+        console.error("Resend OTP error:", error.message);
         res.status(500).json({ success: false, message: "Something went wrong. Please try again." });
     }
 }

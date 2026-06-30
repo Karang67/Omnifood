@@ -41,11 +41,34 @@ export const AuthProvider = ({ children }) => {
       body: JSON.stringify(userData),
     });
     const data = await response.json();
+    if (data.success && !data.requiresVerification) {
+      setUser(data.user);
+      localStorage.setItem('user', JSON.stringify(data.user));
+    }
+    return data;
+  };
+
+  const verifyOtp = async (email, otp) => {
+    const response = await fetch('/api/auth/verify-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, otp }),
+    });
+    const data = await response.json();
     if (data.success) {
       setUser(data.user);
       localStorage.setItem('user', JSON.stringify(data.user));
     }
     return data;
+  };
+
+  const resendOtp = async (email) => {
+    const response = await fetch('/api/auth/resend-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
+    });
+    return await response.json();
   };
 
   const logout = async () => {
@@ -64,7 +87,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, signup, logout, updateUserProfile: updateUserProfileState }}>
+    <AuthContext.Provider value={{ user, loading, login, signup, logout, verifyOtp, resendOtp, updateUserProfile: updateUserProfileState }}>
       {children}
     </AuthContext.Provider>
   );

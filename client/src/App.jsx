@@ -17,6 +17,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import RiderDashboard from './pages/RiderDashboard';
 import TrackOrder from './pages/TrackOrder';
 import StaticPages from './pages/StaticPages';
+import VerifyEmail from './pages/VerifyEmail';
 
 const App = () => {
   return (
@@ -31,6 +32,7 @@ const App = () => {
               <Route path="/menu" element={<MenuPage />} />
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
+              <Route path="/verify-email" element={<VerifyEmail />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/admin" element={<AdminDashboard />} />
               <Route path="/delivery" element={<RiderDashboard />} />

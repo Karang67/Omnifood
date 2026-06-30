@@ -40,12 +40,16 @@ const Signup = () => {
         });
 
         setTimeout(() => {
-          if (result.user.role === 'admin') {
-            navigate('/admin');
-          } else if (result.user.role === 'delivery') {
-            navigate('/delivery');
+          if (result.requiresVerification) {
+            navigate(`/verify-email?email=${encodeURIComponent(result.email)}`);
           } else {
-            navigate('/menu');
+            if (result.user.role === 'admin') {
+              navigate('/admin');
+            } else if (result.user.role === 'delivery') {
+              navigate('/delivery');
+            } else {
+              navigate('/menu');
+            }
           }
         }, 1500);
       } else {

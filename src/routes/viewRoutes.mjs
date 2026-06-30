@@ -22,7 +22,7 @@ const serveFrontend = (req, res) => {
 };
 
 const paths = [
-    "/", "/menu", "/login", "/signup",
+    "/", "/menu", "/login", "/signup", "/verify-email",
     "/admin", "/delivery", "/track/:orderId", "/about", "/press",
     "/careers", "/support", "/safety", "/terms", "/privacy", "/profile",
     "/contact"

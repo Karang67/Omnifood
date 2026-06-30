@@ -1,0 +1,213 @@
+/* =============================================
+   Omnifood Auth Pages — Shared Stylesheet
+   Used by: login.html, signup.html, verify-email.html
+   ============================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, rgba(0,0,0,0.72) 0%, rgba(30,0,0,0.78) 100%),
+                url('/static/img/hero.jpg') center/cover no-repeat fixed;
+    padding: 24px 16px;
+}
+
+/* Container */
+.login-container {
+    width: 100%;
+    max-width: 460px;
+    background: rgba(255,255,255,0.06);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 20px;
+    padding: 40px 36px;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.4);
+    animation: fadeSlideIn 0.45s ease;
+}
+
+@keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Header */
+.header-box { text-align: center; margin-bottom: 28px; }
+
+.logo-text {
+    font-family: 'Outfit', sans-serif;
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #e52a2a;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    text-shadow: 0 0 24px rgba(229,42,42,0.4);
+}
+
+.subtitle {
+    color: rgba(255,255,255,0.65);
+    font-size: 0.9rem;
+    margin-top: 6px;
+    font-weight: 400;
+}
+
+/* Alert Box */
+.alert {
+    display: none;
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 0.88rem;
+    margin-bottom: 20px;
+    text-align: center;
+    font-weight: 500;
+    border: 1px solid transparent;
+}
+.alert-error   { background: rgba(229,42,42,0.15); color: #ff7070; border-color: rgba(229,42,42,0.35); }
+.alert-success { background: rgba(40,200,80,0.15);  color: #5ce87c; border-color: rgba(40,200,80,0.35); }
+
+/* Form */
+.form-group { margin-bottom: 20px; }
+
+.form-group label {
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: rgba(255,255,255,0.55);
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-wrapper i {
+    position: absolute;
+    left: 14px;
+    color: rgba(255,255,255,0.4);
+    font-size: 1.1rem;
+    pointer-events: none;
+}
+
+.form-control {
+    width: 100%;
+    padding: 13px 14px 13px 40px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.14);
+    border-radius: 10px;
+    color: #fff;
+    font-size: 0.95rem;
+    font-family: 'Inter', sans-serif;
+    transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+    outline: none;
+}
+.form-control::placeholder { color: rgba(255,255,255,0.3); }
+.form-control:focus {
+    border-color: #e52a2a;
+    background: rgba(255,255,255,0.11);
+    box-shadow: 0 0 0 3px rgba(229,42,42,0.18);
+}
+
+/* OTP Input Row */
+.otp-row {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 24px;
+}
+
+.otp-input {
+    width: 52px;
+    height: 60px;
+    text-align: center;
+    font-size: 1.6rem;
+    font-weight: 700;
+    font-family: 'Outfit', sans-serif;
+    background: rgba(255,255,255,0.08);
+    border: 2px solid rgba(255,255,255,0.15);
+    border-radius: 10px;
+    color: #fff;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+.otp-input:focus {
+    border-color: #e52a2a;
+    box-shadow: 0 0 0 3px rgba(229,42,42,0.2);
+}
+.otp-input.filled { border-color: rgba(229,42,42,0.6); }
+
+/* Submit Button */
+.btn-submit {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #e52a2a, #b71c1c);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    font-family: 'Outfit', sans-serif;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s, filter 0.15s;
+    box-shadow: 0 6px 24px rgba(229,42,42,0.35);
+    margin-top: 4px;
+}
+.btn-submit:hover  { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(229,42,42,0.45); filter: brightness(1.05); }
+.btn-submit:active { transform: translateY(0); }
+.btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+/* Switch link / footer */
+.switch-link {
+    text-align: center;
+    margin-top: 24px;
+    color: rgba(255,255,255,0.5);
+    font-size: 0.88rem;
+}
+.switch-link a {
+    color: #e52a2a;
+    font-weight: 600;
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s;
+}
+.switch-link a:hover { border-bottom-color: #e52a2a; }
+
+/* Resend timer */
+.resend-section { text-align: center; margin-top: 16px; font-size: 0.87rem; color: rgba(255,255,255,0.5); }
+.resend-btn {
+    background: none;
+    border: none;
+    color: #e52a2a;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.87rem;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+}
+.resend-btn:disabled { color: rgba(255,255,255,0.3); cursor: default; }
+
+/* Email hint on verify page */
+.email-hint {
+    text-align: center;
+    color: rgba(255,255,255,0.55);
+    font-size: 0.88rem;
+    margin-bottom: 24px;
+    line-height: 1.6;
+}
+.email-hint strong { color: #fff; }
+
+@media (max-width: 480px) {
+    .login-container { padding: 30px 20px; }
+    .otp-input { width: 42px; height: 52px; font-size: 1.3rem; }
+}
