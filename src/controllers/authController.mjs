@@ -51,7 +51,8 @@ export async function signup(req, res) {
             user: { id: newUser._id, name: newUser.name, email: newUser.email, role: newUser.role, phone: newUser.phone, address: newUser.address }
         });
     } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        console.error("Signup error:", error.message);
+        res.status(500).json({ success: false, message: "Something went wrong. Please try again." });
     }
 }
 
@@ -79,7 +80,8 @@ export async function login(req, res) {
             user: { id: user._id, name: user.name, email: user.email, role: user.role, phone: user.phone, address: user.address }
         });
     } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        console.error("Login error:", error.message);
+        res.status(500).json({ success: false, message: "Something went wrong. Please try again." });
     }
 }
 

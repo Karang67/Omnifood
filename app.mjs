@@ -1,3 +1,6 @@
+import dns from "dns";
+dns.setServers(["8.8.8.8", "8.8.4.4"]); // Force Google DNS — system DNS blocks SRV records needed for MongoDB Atlas
+
 import dotenv from "dotenv";
 dotenv.config();
 
