@@ -163,7 +163,34 @@ const WebsiteCms = ({ activeTab }) => {
                         <input type="email" className="form-control" value={config.homepage.contact.email} onChange={(e) => setConfig({ ...config, homepage: { ...config.homepage, contact: { ...config.homepage.contact, email: e.target.value } } })} />
                     </div>
 
-                    <button type="submit" className="btn-submit" style={{ width: 'fit-content', padding: '12px 30px' }}>Save Homepage Config</button>
+                    <h3 style={{ borderTop: '1px dashed rgba(255,255,255,0.1)', paddingTop: '15px', color: '#fff', fontSize: '1.05rem', margin: 0 }}>Homepage Section Master Toggles</h3>
+                    <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.85rem', margin: 0 }}>Show or hide entire modules on the landing page instantly:</p>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', background: 'rgba(255,255,255,0.02)', padding: '16px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.06)' }}>
+                        {[
+                            { key: 'showHero', label: '1. Hero Section' },
+                            { key: 'showFeatures', label: '2. Features Section' },
+                            { key: 'showSignatureMeals', label: '3. Signature Dishes' },
+                            { key: 'showHowItWorks', label: '4. How it Works (Steps)' },
+                            { key: 'showCities', label: '5. Cities Section' },
+                            { key: 'showTestimonials', label: '6. Testimonials' },
+                            { key: 'showPlans', label: '7. Subscription Plans' },
+                            { key: 'showContactForm', label: '8. Contact Feedback Form' }
+                        ].map(sec => (
+                            <label key={sec.key} style={{ color: '#fff', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                                <input 
+                                    type="checkbox" 
+                                    checked={config.homepage[sec.key] !== false} 
+                                    onChange={(e) => setConfig({
+                                        ...config,
+                                        homepage: { ...config.homepage, [sec.key]: e.target.checked }
+                                    })}
+                                />
+                                {sec.label}
+                            </label>
+                        ))}
+                    </div>
+
+                    <button type="submit" className="btn-submit" style={{ width: 'fit-content', padding: '12px 30px', marginTop: '10px' }}>Save Homepage Config</button>
                 </form>
             )}
 

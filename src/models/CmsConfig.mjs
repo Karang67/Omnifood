@@ -19,7 +19,15 @@ const cmsConfigSchema = new mongoose.Schema({
             facebook: { type: String, default: "#" },
             instagram: { type: String, default: "#" },
             twitter: { type: String, default: "#" }
-        }
+        },
+        showHero: { type: Boolean, default: true },
+        showFeatures: { type: Boolean, default: true },
+        showSignatureMeals: { type: Boolean, default: true },
+        showHowItWorks: { type: Boolean, default: true },
+        showCities: { type: Boolean, default: true },
+        showTestimonials: { type: Boolean, default: true },
+        showPlans: { type: Boolean, default: true },
+        showContactForm: { type: Boolean, default: true }
     },
     // Website Settings
     website: {
