@@ -10,6 +10,7 @@ import cookieParser from "cookie-parser";
 import path from "path";
 import { fileURLToPath } from "url";
 import connectDB from "./src/config/db.mjs";
+import bcrypt from "bcryptjs";
 import FoodItem from "./src/models/FoodItem.mjs";
 import SurgeZone from "./src/models/SurgeZone.mjs";
 import User from "./src/models/User.mjs";
@@ -113,10 +114,37 @@ async function migrateUserRoles() {
     }
 }
 
+// Seed default Super Admin account if not exists
+async function seedSuperAdmin() {
+    try {
+        const adminCount = await User.countDocuments({ role: "super_admin" });
+        if (adminCount === 0) {
+            const hashedPassword = await bcrypt.hash("admin123", 10);
+            const defaultAdmin = new User({
+                name: "Super Admin",
+                email: "admin@omnifood.com",
+                password: hashedPassword,
+                role: "super_admin",
+                phone: "1234567890",
+                address: "Omnifood Tower Headquarters"
+            });
+            await defaultAdmin.save();
+            console.log("=========================================");
+            console.log("Default Super Admin seeded successfully!");
+            console.log("Email: admin@omnifood.com");
+            console.log("Password: admin123");
+            console.log("=========================================");
+        }
+    } catch (error) {
+        console.error("Failed to seed default Super Admin:", error.message);
+    }
+}
+
 // Start database and Express listener
 async function startServer() {
     await connectDB();
     await migrateUserRoles();
+    await seedSuperAdmin();
     await seedFoodCatalog();
     await seedSurgeZones();
     
