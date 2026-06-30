@@ -57,15 +57,33 @@ const Signup = () => {
   };
 
   useEffect(() => {
+    const initializeGoogleBtn = () => {
+      if (window.google) {
+        window.google.accounts.id.initialize({
+          client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID || "143055305678-gr960v9o6tnd5ef44f8bc8h0pgo8naij.apps.googleusercontent.com",
+          callback: handleGoogleCallback,
+        });
+        window.google.accounts.id.renderButton(
+          document.getElementById("googleBtn"),
+          { theme: "outline", size: "large", width: "100%", text: "signup_with" }
+        );
+      }
+    };
+
     if (window.google) {
-      window.google.accounts.id.initialize({
-        client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID || "143055305678-gr960v9o6tnd5ef44f8bc8h0pgo8naij.apps.googleusercontent.com",
-        callback: handleGoogleCallback,
-      });
-      window.google.accounts.id.renderButton(
-        document.getElementById("googleBtn"),
-        { theme: "outline", size: "large", width: "100%", text: "signup_with" }
-      );
+      initializeGoogleBtn();
+    } else {
+      let attempts = 0;
+      const interval = setInterval(() => {
+        attempts++;
+        if (window.google) {
+          initializeGoogleBtn();
+          clearInterval(interval);
+        } else if (attempts >= 30) {
+          clearInterval(interval);
+        }
+      }, 100);
+      return () => clearInterval(interval);
     }
   }, []);
 
