@@ -71,6 +71,20 @@ export const AuthProvider = ({ children }) => {
     return await response.json();
   };
 
+  const loginWithGoogle = async (credential) => {
+    const response = await fetch('/api/auth/google', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ credential }),
+    });
+    const data = await response.json();
+    if (data.success) {
+      setUser(data.user);
+      localStorage.setItem('user', JSON.stringify(data.user));
+    }
+    return data;
+  };
+
   const logout = async () => {
     try {
       await fetch('/api/auth/logout', { method: 'POST' });
@@ -87,7 +101,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, signup, logout, verifyOtp, resendOtp, updateUserProfile: updateUserProfileState }}>
+    <AuthContext.Provider value={{ user, loading, login, signup, logout, verifyOtp, resendOtp, loginWithGoogle, updateUserProfile: updateUserProfileState }}>
       {children}
     </AuthContext.Provider>
   );

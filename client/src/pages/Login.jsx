@@ -1,17 +1,69 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import '../styles/auth.css';
 
 const Login = () => {
-  const { login } = useAuth();
+  const { login, loginWithGoogle } = useAuth();
   const navigate = useNavigate();
-
   
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [alert, setAlert] = useState({ show: false, type: '', message: '' });
   const [loading, setLoading] = useState(false);
+
+  const handleGoogleCallback = async (res) => {
+    setAlert({ show: false, type: '', message: '' });
+    setLoading(true);
+    try {
+      const result = await loginWithGoogle(res.credential);
+      if (result.success) {
+        setAlert({
+          show: true,
+          type: 'alert-success',
+          message: `${result.message} Redirecting...`
+        });
+        
+        setTimeout(() => {
+          if (result.user.role === 'admin') {
+            navigate('/admin');
+          } else if (result.user.role === 'delivery') {
+            navigate('/delivery');
+          } else {
+            navigate('/menu');
+          }
+        }, 1500);
+      } else {
+        setAlert({
+          show: true,
+          type: 'alert-error',
+          message: result.message || 'Google Auth failed.'
+        });
+      }
+    } catch (err) {
+      console.error(err);
+      setAlert({
+        show: true,
+        type: 'alert-error',
+        message: 'Google login failed due to network error.'
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (window.google) {
+      window.google.accounts.id.initialize({
+        client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID || "143055305678-gr960v9o6tnd5ef44f8bc8h0pgo8naij.apps.googleusercontent.com",
+        callback: handleGoogleCallback,
+      });
+      window.google.accounts.id.renderButton(
+        document.getElementById("googleBtn"),
+        { theme: "outline", size: "large", width: "100%", text: "continue_with" }
+      );
+    }
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -114,14 +166,7 @@ const Login = () => {
           <span>OR</span>
         </div>
 
-        <button 
-          type="button" 
-          className="btn-google-auth" 
-          onClick={() => alert("Google Authentication service simulated. Welcome to Omnifood!")}
-        >
-          <i className="ion-social-google" style={{ marginRight: '10px' }}></i>
-          Continue with Google
-        </button>
+        <div id="googleBtn" style={{ display: 'flex', justifyContent: 'center', marginTop: '10px', width: '100%' }}></div>
 
         <div className="switch-link">
           Don't have an account? <Link to="/signup">Sign up here</Link>
