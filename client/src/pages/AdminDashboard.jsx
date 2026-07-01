@@ -10,6 +10,7 @@ import OrderCms from '../components/Admin/OrderCms';
 import UserCms from '../components/Admin/UserCms';
 import ContentCms from '../components/Admin/ContentCms';
 import SettingsCms from '../components/Admin/SettingsCms';
+import FeatureManagement from '../components/Admin/FeatureManagement';
 import '../styles/admin.css';
 
 const AdminDashboard = () => {
@@ -68,6 +69,7 @@ const AdminDashboard = () => {
         {(activeTab === 'customers' || activeTab === 'riders' || activeTab === 'owners') && <UserCms activeTab={activeTab} />}
         {(activeTab === 'blogs' || activeTab === 'faqs') && <ContentCms activeTab={activeTab} />}
         {(activeTab === 'settings-gateways' || activeTab === 'settings-fees' || activeTab === 'backups') && <SettingsCms activeTab={activeTab} />}
+        {activeTab === 'feature-flags' && <FeatureManagement />}
       </main>
     </div>
   );

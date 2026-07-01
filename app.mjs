@@ -9,6 +9,8 @@ import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import path from "path";
 import { fileURLToPath } from "url";
+import { createServer } from "http";
+import { Server } from "socket.io";
 import connectDB from "./src/config/db.mjs";
 import bcrypt from "bcryptjs";
 import FoodItem from "./src/models/FoodItem.mjs";
@@ -18,6 +20,7 @@ import viewRoutes from "./src/routes/viewRoutes.mjs";
 import authRoutes from "./src/routes/authRoutes.mjs";
 import apiRoutes from "./src/routes/apiRoutes.mjs";
 import adminRoutes from "./src/routes/adminRoutes.mjs";
+import { seedFeatureFlags } from "./src/utils/seedFeatureFlags.mjs";
 
 // Derive path variables
 const __filename = fileURLToPath(import.meta.url);
@@ -26,6 +29,9 @@ const __dirname = path.dirname(__filename);
 // Initialize Express App
 const app = express();
 const port = process.env.PORT || 9000;
+const httpServer = createServer(app);
+const io = new Server(httpServer, { cors: { origin: '*' } });
+app.set('io', io);
 
 // Enforce secure JWT fallback checking in production
 if (process.env.NODE_ENV === "production" && !process.env.JWT_SECRET) {
@@ -39,7 +45,7 @@ app.use((req, res, next) => {
     res.setHeader("X-Frame-Options", "DENY");
     res.setHeader("X-XSS-Protection", "1; mode=block");
     res.setHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
-    res.setHeader("Content-Security-Policy", "default-src 'self' https://unpkg.com https://fonts.googleapis.com https://fonts.gstatic.com; img-src 'self' data: https://unpkg.com https://*.openstreetmap.org; style-src 'self' 'unsafe-inline' https://unpkg.com https://fonts.googleapis.com https://accounts.google.com/gsi/style; script-src 'self' 'unsafe-inline' https://unpkg.com https://cdn.jsdelivr.net https://accounts.google.com/gsi/client; font-src 'self' https://unpkg.com https://fonts.gstatic.com; connect-src 'self' https://accounts.google.com/gsi/; frame-src 'self' https://accounts.google.com/");
+    res.setHeader("Content-Security-Policy", "default-src 'self' https://unpkg.com https://fonts.googleapis.com https://fonts.gstatic.com; img-src 'self' data: https://unpkg.com https://*.openstreetmap.org; style-src 'self' 'unsafe-inline' https://unpkg.com https://fonts.googleapis.com https://accounts.google.com/gsi/style; script-src 'self' 'unsafe-inline' https://unpkg.com https://cdn.jsdelivr.net https://accounts.google.com/gsi/client; font-src 'self' https://unpkg.com https://fonts.gstatic.com; connect-src 'self' https://accounts.google.com/gsi/ ws: wss:; frame-src 'self' https://accounts.google.com/");
     next();
 });
 
@@ -198,8 +204,9 @@ async function startServer() {
     await seedSuperAdmin();
     await seedFoodCatalog();
     await seedSurgeZones();
+    await seedFeatureFlags();
     
-    app.listen(port, () => {
+    httpServer.listen(port, () => {
         console.log(`Server running at http://localhost:${port}`);
     });
 }

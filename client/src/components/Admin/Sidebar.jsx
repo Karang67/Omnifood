@@ -84,6 +84,7 @@ const Sidebar = ({ activeTab, setActiveTab, onLogout, userName }) => {
             items: [
                 { id: "settings-gateways", label: "Payment Setup", icon: "ion-card" },
                 { id: "settings-fees", label: "Delivery & Taxes", icon: "ion-ios-calculator" },
+                { id: "feature-flags", label: "Feature Flags", icon: "ion-ios-toggle" },
                 { id: "backups", label: "Data Backups", icon: "ion-archive" }
             ]
         }

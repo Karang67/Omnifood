@@ -39,6 +39,13 @@ import {
     exportCollection,
     getAnalyticsDashboard
 } from "../controllers/adminCmsController.mjs";
+import {
+    getFeatureFlags,
+    updateFeatureFlag,
+    bulkAction,
+    getFeatureAuditLogs,
+    getPublicFeatureFlags
+} from "../controllers/featureController.mjs";
 
 const router = express.Router();
 
@@ -106,5 +113,12 @@ router.get("/api/admin/backup/:collection", cmsAuth, exportCollection);
 
 // Comprehensive Recharts analytics dashboard
 router.get("/api/admin/dashboard-analytics", cmsAuth, getAnalyticsDashboard);
+
+// Feature flag management
+router.get("/api/admin/features", cmsAuth, getFeatureFlags);
+router.put("/api/admin/features/:slug", cmsAuth, updateFeatureFlag);
+router.post("/api/admin/features/bulk", cmsAuth, bulkAction);
+router.get("/api/admin/features/audit", cmsAuth, getFeatureAuditLogs);
+router.get("/api/features/public", getPublicFeatureFlags);
 
 export default router;

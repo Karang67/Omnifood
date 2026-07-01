@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import FeatureGuard from '../components/FeatureGuard';
 
 
 const Home = () => {
@@ -59,48 +60,52 @@ const Home = () => {
               
               {/* Search Bar Widget */}
               {(!config || config.homepage.showHeroSearch !== false) && (
-                <form onSubmit={handleSearchSubmit} className="hero-search-container">
-                  <div className="search-loc-picker">
-                    <i className="ion-ios-location"></i>
-                    <select 
-                      id="locationSelect" 
-                      aria-label="Choose your city location"
-                      value={selectedCity}
-                      onChange={(e) => setSelectedCity(e.target.value)}
-                    >
-                      <option value="delhi">Delhi NCR</option>
-                      <option value="lisbon">Lisbon</option>
-                      <option value="sf">San Francisco</option>
-                      <option value="berlin">Berlin</option>
-                      <option value="london">London</option>
-                    </select>
-                  </div>
-                  <div className="search-input-wrapper">
-                    <i className="ion-ios-search-strong"></i>
-                    <input 
-                      type="text" 
-                      id="foodSearchInput" 
-                      placeholder="Search for sushi, burgers, tacos..." 
-                      aria-label="Search food catalog"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                    />
-                  </div>
-                  <button type="submit" className="btn-search" id="heroSearchBtn">Search</button>
-                </form>
+                <FeatureGuard slug="hero-search-bar" mode="disabled" fallback={null}>
+                  <form onSubmit={handleSearchSubmit} className="hero-search-container">
+                    <div className="search-loc-picker">
+                      <i className="ion-ios-location"></i>
+                      <select 
+                        id="locationSelect" 
+                        aria-label="Choose your city location"
+                        value={selectedCity}
+                        onChange={(e) => setSelectedCity(e.target.value)}
+                      >
+                        <option value="delhi">Delhi NCR</option>
+                        <option value="lisbon">Lisbon</option>
+                        <option value="sf">San Francisco</option>
+                        <option value="berlin">Berlin</option>
+                        <option value="london">London</option>
+                      </select>
+                    </div>
+                    <div className="search-input-wrapper">
+                      <i className="ion-ios-search-strong"></i>
+                      <input 
+                        type="text" 
+                        id="foodSearchInput" 
+                        placeholder="Search for sushi, burgers, tacos..." 
+                        aria-label="Search food catalog"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                      />
+                    </div>
+                    <button type="submit" className="btn-search" id="heroSearchBtn">Search</button>
+                  </form>
+                </FeatureGuard>
               )}
 
-              <div className="hero-cta-buttons">
-                {(!config || config.homepage.showHeroCta1 !== false) && (
-                  <a className="btn btn-full" href="#plans" onClick={(e) => {
-                    e.preventDefault();
-                    document.getElementById('plans').scrollIntoView({ behavior: 'smooth' });
-                  }}>Get Started</a>
-                )}
-                {(!config || config.homepage.showHeroCta2 !== false) && (
-                  <Link className="btn btn-ghost" to="/menu">Explore Menu</Link>
-                )}
-              </div>
+              <FeatureGuard slug="hero-cta-buttons" mode="disabled" fallback={null}>
+                <div className="hero-cta-buttons">
+                  {(!config || config.homepage.showHeroCta1 !== false) && (
+                    <a className="btn btn-full" href="#plans" onClick={(e) => {
+                      e.preventDefault();
+                      document.getElementById('plans').scrollIntoView({ behavior: 'smooth' });
+                    }}>Get Started</a>
+                  )}
+                  {(!config || config.homepage.showHeroCta2 !== false) && (
+                    <Link className="btn btn-ghost" to="/menu">Explore Menu</Link>
+                  )}
+                </div>
+              </FeatureGuard>
             </div>
 
             {/* Hero Image Box with floating badges */}

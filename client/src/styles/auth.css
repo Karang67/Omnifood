@@ -250,14 +250,35 @@ select.form-control option {
 
 /* Responsive Scaling */
 @media only screen and (max-width: 480px) {
+    .auth-page-wrapper {
+        padding: 20px 12px;
+    }
 
     .signup-container,
     .login-container {
-        padding: 30px 20px;
+        padding: 24px 16px;
         border-radius: 15px;
     }
 
+    .header-box {
+        margin-bottom: 20px;
+    }
+
     .logo-text {
-        font-size: 1.8rem;
+        font-size: 1.7rem;
+    }
+
+    .subtitle {
+        font-size: 0.9rem;
+    }
+
+    .form-group {
+        margin-bottom: 16px;
+    }
+
+    .btn-submit,
+    .btn-google-auth {
+        padding: 12px;
+        font-size: 0.9rem;
     }
 }

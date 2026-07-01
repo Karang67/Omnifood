@@ -2358,6 +2358,66 @@ input:checked + .slider:before {
     color: var(--text-muted);
 }
 
+@media (max-width: 768px) {
+    .profile-layout-grid {
+        padding: 0 14px;
+        margin: -24px auto 60px;
+        gap: 20px;
+    }
+
+    .profile-card {
+        padding: 20px;
+    }
+
+    .profile-header-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .profile-avatar-large {
+        width: 72px !important;
+        height: 72px !important;
+    }
+
+    .profile-action-buttons {
+        flex-direction: column;
+    }
+
+    .order-card-header,
+    .order-card-footer,
+    .order-body-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .order-items-list {
+        max-width: 100%;
+        text-align: left;
+        white-space: normal;
+    }
+
+    .order-empty-state {
+        padding: 28px 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .profile-card {
+        padding: 16px;
+    }
+
+    .profile-header-info h2 {
+        font-size: 1.35rem !important;
+    }
+
+    .profile-action-buttons .btn,
+    .profile-action-buttons .btn-danger {
+        width: 100%;
+    }
+}
+
 .order-empty-state i {
     font-size: 3rem;
     color: var(--border-color);

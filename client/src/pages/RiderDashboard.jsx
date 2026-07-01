@@ -419,7 +419,7 @@ const RiderDashboard = () => {
 
                         {/* Action buttons */}
                         {isPlaced && (
-                          <div style={{ display: 'flex', gap: '12px' }}>
+                          <div className="task-actions-row" style={{ display: 'flex', gap: '12px' }}>
                             <button
                               className="btn-header"
                               style={{ backgroundColor: '#25c577', color: '#fff', padding: '10px 20px', borderRadius: '8px', cursor: 'pointer', fontWeight: 600, border: 'none' }}

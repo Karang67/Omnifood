@@ -1278,11 +1278,73 @@
     .delivery-header-panel > div {
         width: 100%;
         justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .delivery-content-area {
+        padding: 18px 16px;
     }
 
     .onboard-card-container {
         padding: 24px 20px;
-        margin: 20px 10px;
+        margin: 20px 0;
+    }
+
+    .task-card {
+        padding: 18px !important;
+    }
+
+    .task-actions-row {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        width: 100%;
+    }
+
+    .task-actions-row button,
+    .task-actions-row .btn-header,
+    .task-actions-row .btn-full-react {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .delivery-header-panel {
+        padding: 14px;
+    }
+
+    .delivery-header-panel h1 {
+        font-size: 1.15rem;
+    }
+
+    .delivery-sidebar {
+        padding: 10px 12px;
+    }
+
+    .sidebar-btn {
+        padding: 8px 10px;
+        font-size: 0.8rem;
+        gap: 8px;
+    }
+
+    .delivery-content-area {
+        padding: 14px 12px;
+    }
+
+    .delivery-content-area h2 {
+        font-size: 1.25rem;
+        margin-bottom: 12px;
+    }
+
+    .task-card {
+        padding: 16px !important;
+    }
+
+    .logout-btn-header {
+        padding: 8px 14px;
+        font-size: 0.8rem;
     }
 }
 

@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import { ThemeProvider } from './context/ThemeContext';
+import { FeatureProvider } from './context/FeatureContext';
 import Header from './components/Layout/Header';
 import Footer from './components/Layout/Footer';
 
@@ -53,10 +54,11 @@ import AccessDenied from './pages/AccessDenied';
 
 const App = () => {
   return (
-    <ThemeProvider>
-      <AuthProvider>
-        <CartProvider>
-        <div className="app-container" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+    <FeatureProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <CartProvider>
+            <div className="app-container" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
           <Header />
           <div className="main-content" style={{ flexGrow: 1, marginTop: '80px' }}>
             <Routes>
@@ -100,12 +102,13 @@ const App = () => {
               <Route path="/terms" element={<StaticPages />} />
               <Route path="/privacy" element={<StaticPages />} />
             </Routes>
+            </div>
+            <Footer />
           </div>
-          <Footer />
-        </div>
-      </CartProvider>
-    </AuthProvider>
-  </ThemeProvider>
+        </CartProvider>
+      </AuthProvider>
+    </ThemeProvider>
+    </FeatureProvider>
   );
 };
 

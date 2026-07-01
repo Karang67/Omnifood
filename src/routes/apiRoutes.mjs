@@ -28,12 +28,13 @@ import {
     getCustomerOrders
 } from "../controllers/orderController.mjs";
 import { authenticateJWT, authorizeRoles } from "../middlewares/authMiddleware.mjs";
+import { checkFeatureEnabled, checkApiAccess } from "../middlewares/featureMiddleware.mjs";
 
 const router = express.Router();
 
 // 1. Public Customer APIs
-router.get("/api/food", getFoodItems);
-router.post("/api/order/place", placeOrder);
+router.get("/api/food", checkFeatureEnabled('customer-menu'), checkApiAccess('customer-menu'), getFoodItems);
+router.post("/api/order/place", checkFeatureEnabled('customer-checkout'), checkApiAccess('customer-checkout'), placeOrder);
 router.get("/api/order/:orderId", getOrderById);
 router.get("/api/orders/customer/:email", authenticateJWT, getCustomerOrders);
 
