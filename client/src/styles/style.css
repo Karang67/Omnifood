@@ -68,6 +68,11 @@ body {
     line-height: 1.6;
 }
 
+.main-content {
+    width: 100%;
+    overflow-x: hidden;
+}
+
 /* REUSABLE GRID & CONTAINER SYSTEM */
 .row {
     max-width: 1200px;
@@ -1533,6 +1538,10 @@ footer {
 }
 
 @media only screen and (max-width: 768px) {
+    .main-content {
+        margin-top: 64px !important;
+    }
+
     .hero-header {
         min-height: auto;
         padding-bottom: 50px;

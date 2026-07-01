@@ -1295,6 +1295,19 @@
         padding: 18px !important;
     }
 
+    .wallet-cards-row {
+        grid-template-columns: 1fr;
+    }
+
+    .cashout-box {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .cashout-box button {
+        width: 100%;
+    }
+
     .task-actions-row {
         display: flex;
         flex-direction: column;

@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import '../../styles/admin.css';
 
 const Sidebar = ({ activeTab, setActiveTab, onLogout, userName }) => {
     const [collapsed, setCollapsed] = useState(false);
+    const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' ? window.innerWidth < 768 : false);
     const [expandedGroups, setExpandedGroups] = useState({
         website: true,
         food: true,
@@ -13,6 +14,13 @@ const Sidebar = ({ activeTab, setActiveTab, onLogout, userName }) => {
         marketing: false,
         settings: false
     });
+
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth < 768);
+        handleResize();
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     const toggleGroup = (group) => {
         setExpandedGroups(prev => ({ ...prev, [group]: !prev[group] }));
@@ -90,18 +98,23 @@ const Sidebar = ({ activeTab, setActiveTab, onLogout, userName }) => {
         }
     ];
 
+    const sidebarWidth = collapsed ? (isMobile ? '100%' : '80px') : (isMobile ? '100%' : '260px');
+    const sidebarHeight = isMobile ? 'auto' : '100vh';
+    const sidebarPosition = isMobile ? 'relative' : 'sticky';
+
     return (
         <aside className={`admin-sidebar-cms ${collapsed ? 'collapsed' : ''}`} style={{
-            width: collapsed ? '80px' : '260px',
+            width: sidebarWidth,
             backgroundColor: 'rgba(15, 23, 42, 0.95)',
             borderRight: '1px solid rgba(255, 255, 255, 0.1)',
-            height: '100vh',
+            height: sidebarHeight,
             display: 'flex',
             flexDirection: 'column',
-            position: 'sticky',
+            position: sidebarPosition,
             top: 0,
             transition: 'width 0.3s ease',
-            overflowY: 'auto'
+            overflowY: 'auto',
+            maxWidth: '100%'
         }}>
             {/* Sidebar Header */}
             <div style={{

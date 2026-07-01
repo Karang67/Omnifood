@@ -35,7 +35,7 @@ const AdminDashboard = () => {
   if (!user || user.role !== 'super_admin') return null;
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: '#0b0f19', color: '#fff' }}>
+    <div className="admin-page-shell">
       {/* Dynamic Collapsible Sidebar navigation */}
       <Sidebar 
         activeTab={activeTab} 
@@ -45,16 +45,16 @@ const AdminDashboard = () => {
       />
 
       {/* Main CMS panel viewport */}
-      <main style={{ flexGrow: 1, padding: '30px 40px', overflowY: 'auto', height: '100vh' }}>
-        <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: '16px' }}>
-          <div>
-            <h1 style={{ margin: 0, fontSize: '1.8rem', fontWeight: 800, fontFamily: 'Outfit, sans-serif' }}>
+      <main className="admin-dashboard-main">
+        <header className="admin-dashboard-header">
+          <div className="admin-dashboard-title-group">
+            <h1 className="admin-dashboard-title">
               {activeTab.charAt(0).toUpperCase() + activeTab.slice(1).replace('-', ' ')}
             </h1>
-            <span style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.45)' }}>Omnifood operations tower management dashboard</span>
+            <span className="admin-dashboard-subtitle">Omnifood operations tower management dashboard</span>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-            <span className="ops-agent-tag" style={{ background: 'rgba(226, 55, 68, 0.15)', color: '#e23744', border: '1px solid rgba(226, 55, 68, 0.3)', padding: '6px 12px', borderRadius: '50px', fontSize: '0.8rem', fontWeight: 600 }}>
+          <div className="admin-dashboard-actions">
+            <span className="ops-agent-tag admin-dashboard-role-badge">
               Role: {user.role.toUpperCase()}
             </span>
           </div>
