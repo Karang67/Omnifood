@@ -1,26 +1,33 @@
 import nodemailer from "nodemailer";
 import dns from "dns";
 
-const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 465,
-    secure: true,
-    family: 4,
-    lookup: (hostname, options, callback) => {
-        dns.lookup(hostname, { family: 4 }, callback);
-    },
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-    },
-    tls: {
-        rejectUnauthorized: false
-    },
-    connectionTimeout: 10000,
-    greetingTimeout: 10000,
-    socketTimeout: 10000,
-    debug: false
-});
+let transporter;
+
+function getTransporter() {
+    if (!transporter) {
+        transporter = nodemailer.createTransport({
+            host: "smtp.gmail.com",
+            port: 465,
+            secure: true,
+            family: 4,
+            lookup: (hostname, options, callback) => {
+                dns.lookup(hostname, { family: 4 }, callback);
+            },
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS
+            },
+            tls: {
+                rejectUnauthorized: false
+            },
+            connectionTimeout: 10000,
+            greetingTimeout: 10000,
+            socketTimeout: 10000,
+            debug: false
+        });
+    }
+    return transporter;
+}
 
 export async function sendOtpEmail(email, name, otp) {
     const mailOptions = {
@@ -85,7 +92,7 @@ export async function sendOtpEmail(email, name, otp) {
     };
 
     try {
-        await transporter.sendMail(mailOptions);
+        await getTransporter().sendMail(mailOptions);
     } catch (error) {
         console.error("sendOtpEmail error:", error);
         throw error;
