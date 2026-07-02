@@ -7,8 +7,8 @@ function getTransporter() {
     if (!transporter) {
         transporter = nodemailer.createTransport({
             host: "smtp.gmail.com",
-            port: 465,
-            secure: true,
+            port: 587,
+            secure: false,
             family: 4,
             lookup: (hostname, options, callback) => {
                 dns.lookup(hostname, { family: 4 }, callback);
