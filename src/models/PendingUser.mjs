@@ -6,7 +6,7 @@ const pendingUserSchema = new mongoose.Schema({
     passwordHash: { type: String, required: true },
     phone:        { type: String, default: "" },
     address:      { type: String, default: "" },
-    role:         { type: String, enum: ["customer", "admin", "delivery"], default: "customer" },
+    role:         { type: String, enum: ["customer", "rider", "restaurant_owner", "super_admin"], default: "customer" },
     otp:          { type: String, required: true },
     otpExpiry:    { type: Date, required: true },
     createdAt:    { type: Date, default: Date.now, expires: 600 } // Auto-delete after 10 minutes

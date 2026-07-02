@@ -61,13 +61,13 @@ router.post("/api/admin/banners", ...cmsAuth, upload.single("image"), createBann
 router.delete("/api/admin/banners/:id", cmsAuth, deleteBanner);
 
 // Categories
-router.get("/api/admin/categories", getCategories);
+router.get("/api/admin/categories", cmsAuth, getCategories);
 router.post("/api/admin/categories", ...cmsAuth, upload.single("image"), createCategory);
 router.put("/api/admin/categories/:id", ...cmsAuth, upload.single("image"), updateCategory);
 router.delete("/api/admin/categories/:id", cmsAuth, deleteCategory);
 
 // Restaurants
-router.get("/api/admin/restaurants", getRestaurants);
+router.get("/api/admin/restaurants", cmsAuth, getRestaurants);
 router.post("/api/admin/restaurants", ...cmsAuth, upload.fields([{ name: "logo", maxCount: 1 }, { name: "banner", maxCount: 1 }]), createRestaurant);
 router.put("/api/admin/restaurants/:id", ...cmsAuth, upload.fields([{ name: "logo", maxCount: 1 }, { name: "banner", maxCount: 1 }]), updateRestaurant);
 router.delete("/api/admin/restaurants/:id", cmsAuth, deleteRestaurant);
@@ -79,22 +79,22 @@ router.put("/api/admin/coupons/:id", cmsAuth, updateCoupon);
 router.delete("/api/admin/coupons/:id", cmsAuth, deleteCoupon);
 
 // Offers
-router.get("/api/admin/offers", getOffers);
+router.get("/api/admin/offers", cmsAuth, getOffers);
 router.post("/api/admin/offers", cmsAuth, createOffer);
 router.delete("/api/admin/offers/:id", cmsAuth, deleteOffer);
 
 // Reviews
-router.get("/api/admin/reviews", getReviews);
+router.get("/api/admin/reviews", cmsAuth, getReviews);
 router.put("/api/admin/reviews/:id", cmsAuth, updateReviewStatus);
 router.delete("/api/admin/reviews/:id", cmsAuth, deleteReview);
 
 // Blogs
-router.get("/api/admin/blogs", getBlogs);
+router.get("/api/admin/blogs", cmsAuth, getBlogs);
 router.post("/api/admin/blogs", ...cmsAuth, upload.single("image"), createBlog);
 router.delete("/api/admin/blogs/:id", cmsAuth, deleteBlog);
 
 // FAQs
-router.get("/api/admin/faqs", getFaqs);
+router.get("/api/admin/faqs", cmsAuth, getFaqs);
 router.post("/api/admin/faqs", cmsAuth, createFaq);
 router.delete("/api/admin/faqs/:id", cmsAuth, deleteFaq);
 

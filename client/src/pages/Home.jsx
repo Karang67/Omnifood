@@ -104,6 +104,9 @@ const Home = () => {
                   {(!config || config.homepage.showHeroCta2 !== false) && (
                     <Link className="btn btn-ghost" to="/menu">Explore Menu</Link>
                   )}
+              {(!config || config.homepage.showHeroCta3 !== false) && (
+                <Link className="btn btn-outline" to="/signup?role=restaurant_owner">Owner Signup</Link>
+              )}
                 </div>
               </FeatureGuard>
             </div>

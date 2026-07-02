@@ -4,6 +4,7 @@ import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { FeatureProvider } from './context/FeatureContext';
+import { NotificationProvider } from './context/NotificationContext';
 import Header from './components/Layout/Header';
 import Footer from './components/Layout/Footer';
 
@@ -46,6 +47,7 @@ import Signup from './pages/Signup';
 import Profile from './pages/Profile';
 import AdminDashboard from './pages/AdminDashboard';
 import RiderDashboard from './pages/RiderDashboard';
+import RestaurantOwnerDashboard from './pages/RestaurantOwnerDashboard';
 import TrackOrder from './pages/TrackOrder';
 import StaticPages from './pages/StaticPages';
 import VerifyEmail from './pages/VerifyEmail';
@@ -57,57 +59,64 @@ const App = () => {
     <FeatureProvider>
       <ThemeProvider>
         <AuthProvider>
-          <CartProvider>
-            <div className="app-container" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-          <Header />
-          <div className="main-content" style={{ flexGrow: 1, marginTop: '80px' }}>
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/menu" element={
-                <PageGuard disabledFlag="disableMenuPage">
-                  <MenuPage />
-                </PageGuard>
-              } />
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />
-              <Route path="/verify-email" element={<VerifyEmail />} />
-              <Route path="/profile" element={
-                <PageGuard disabledFlag="disableProfilePage">
-                  <Profile />
-                </PageGuard>
-              } />
-              <Route path="/admin" element={
-                <PageGuard disabledFlag="disableAdminPage">
-                  <ProtectedRoute allowedRoles={['super_admin']}>
-                    <AdminDashboard />
-                  </ProtectedRoute>
-                </PageGuard>
-              } />
-              <Route path="/delivery" element={
-                <PageGuard disabledFlag="disableDeliveryPage">
-                  <ProtectedRoute allowedRoles={['rider', 'super_admin']}>
-                    <RiderDashboard />
-                  </ProtectedRoute>
-                </PageGuard>
-              } />
-              <Route path="/track/:orderId" element={<TrackOrder />} />
-              <Route path="/access-denied" element={<AccessDenied />} />
+          <NotificationProvider>
+            <CartProvider>
+              <div className="app-container" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+                <Header />
+                <div className="main-content" style={{ flexGrow: 1, marginTop: '80px' }}>
+                  <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/menu" element={
+                      <PageGuard disabledFlag="disableMenuPage">
+                        <MenuPage />
+                      </PageGuard>
+                    } />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/signup" element={<Signup />} />
+                    <Route path="/verify-email" element={<VerifyEmail />} />
+                    <Route path="/profile" element={
+                      <PageGuard disabledFlag="disableProfilePage">
+                        <Profile />
+                      </PageGuard>
+                    } />
+                    <Route path="/admin" element={
+                      <PageGuard disabledFlag="disableAdminPage">
+                        <ProtectedRoute allowedRoles={['super_admin']}>
+                          <AdminDashboard />
+                        </ProtectedRoute>
+                      </PageGuard>
+                    } />
+                    <Route path="/delivery" element={
+                      <PageGuard disabledFlag="disableDeliveryPage">
+                        <ProtectedRoute allowedRoles={['rider', 'super_admin']}>
+                          <RiderDashboard />
+                        </ProtectedRoute>
+                      </PageGuard>
+                    } />
+                    <Route path="/restaurant-owner" element={
+                      <ProtectedRoute allowedRoles={['restaurant_owner']}>
+                        <RestaurantOwnerDashboard />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="/track/:orderId" element={<TrackOrder />} />
+                    <Route path="/access-denied" element={<AccessDenied />} />
 
-              {/* Static Pages */}
-              <Route path="/about" element={<StaticPages />} />
-              <Route path="/press" element={<StaticPages />} />
-              <Route path="/careers" element={<StaticPages />} />
-              <Route path="/support" element={<StaticPages />} />
-              <Route path="/safety" element={<StaticPages />} />
-              <Route path="/terms" element={<StaticPages />} />
-              <Route path="/privacy" element={<StaticPages />} />
-            </Routes>
-            </div>
-            <Footer />
-          </div>
-        </CartProvider>
-      </AuthProvider>
-    </ThemeProvider>
+                    {/* Static Pages */}
+                    <Route path="/about" element={<StaticPages />} />
+                    <Route path="/press" element={<StaticPages />} />
+                    <Route path="/careers" element={<StaticPages />} />
+                    <Route path="/support" element={<StaticPages />} />
+                    <Route path="/safety" element={<StaticPages />} />
+                    <Route path="/terms" element={<StaticPages />} />
+                    <Route path="/privacy" element={<StaticPages />} />
+                  </Routes>
+                </div>
+                <Footer />
+              </div>
+            </CartProvider>
+          </NotificationProvider>
+        </AuthProvider>
+      </ThemeProvider>
     </FeatureProvider>
   );
 };

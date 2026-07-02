@@ -25,7 +25,9 @@ import {
     updateSurgeZone,
     getFleetAnalytics,
     submitLegacyContact,
-    getCustomerOrders
+    getCustomerOrders,
+    getRestaurantOrders,
+    acceptRestaurantOrder
 } from "../controllers/orderController.mjs";
 import { authenticateJWT, authorizeRoles } from "../middlewares/authMiddleware.mjs";
 import { checkFeatureEnabled, checkApiAccess } from "../middlewares/featureMiddleware.mjs";
@@ -38,7 +40,10 @@ router.post("/api/order/place", checkFeatureEnabled('customer-checkout'), checkA
 router.get("/api/order/:orderId", getOrderById);
 router.get("/api/orders/customer/:email", authenticateJWT, getCustomerOrders);
 
-// 2. Delivery Partner / Rider APIs (requires "rider" or "super_admin" roles)
+// 1b. Restaurant Owner APIs
+router.get("/api/restaurant/orders", authenticateJWT, authorizeRoles("restaurant_owner"), getRestaurantOrders);
+
+// 2. Delivery Partner / Rider APIs (requires "rider", "restaurant_owner" or "super_admin" roles)
 router.get("/api/delivery/orders/:partnerId", authenticateJWT, authorizeRoles("rider", "super_admin"), getPartnerOrders);
 router.post("/api/delivery/order/status", authenticateJWT, authorizeRoles("rider", "super_admin"), updateOrderStatus);
 router.post("/api/delivery/order/accept", authenticateJWT, authorizeRoles("rider", "super_admin"), acceptRiderOrder);
@@ -49,8 +54,12 @@ router.post("/api/delivery/location", authenticateJWT, authorizeRoles("rider", "
 router.post("/api/delivery/cashout", authenticateJWT, authorizeRoles("rider", "super_admin"), cashOutWallet);
 router.post("/api/delivery/ticket/create", authenticateJWT, authorizeRoles("rider", "super_admin"), createSupportTicket);
 
+// Restaurant owner APIs
+router.post("/api/restaurant/order/accept", authenticateJWT, authorizeRoles("restaurant_owner"), acceptRestaurantOrder);
+router.post("/api/restaurant/order/assign", authenticateJWT, authorizeRoles("restaurant_owner", "super_admin"), assignDeliveryPartner);
+
 // 3. Shared Admin/Rider APIs
-router.get("/api/admin/delivery-partners", authenticateJWT, authorizeRoles("super_admin", "rider"), getDeliveryPartners);
+router.get("/api/admin/delivery-partners", authenticateJWT, authorizeRoles("super_admin", "rider", "restaurant_owner"), getDeliveryPartners);
 router.get("/api/admin/tickets", authenticateJWT, authorizeRoles("super_admin", "rider"), getSupportTickets);
 
 // 4. Admin Command Dashboard APIs (strictly requires "super_admin" role)

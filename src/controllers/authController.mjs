@@ -65,11 +65,13 @@ export async function signup(req, res) {
         const otp = generateOtp();
         const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
         const passwordHash = hashPassword(password);
+        const allowedRoles = ["customer", "rider", "restaurant_owner"];
+        const signupRole = allowedRoles.includes(role) ? role : "customer";
 
         // Upsert: replace any existing pending verification for this email
         await PendingUser.findOneAndUpdate(
             { email: email.toLowerCase() },
-            { name, email: email.toLowerCase(), passwordHash, phone: phone || "", address: address || "", role: role || "customer", otp, otpExpiry },
+            { name, email: email.toLowerCase(), passwordHash, phone: phone || "", address: address || "", role: signupRole, otp, otpExpiry },
             { upsert: true, new: true }
         );
 

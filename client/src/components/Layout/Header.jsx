@@ -78,12 +78,13 @@ const Header = () => {
             {user ? (
               <>
                 <li><Link to="/profile" onClick={() => setMobileMenuOpen(false)} style={{ fontWeight: '500', color: '#e67e22' }}>Profile</Link></li>
-                {user.role === 'super_admin' && (
-                  <li><Link to="/admin" onClick={() => setMobileMenuOpen(false)} className="nav-portal-btn">Admin Portal</Link></li>
-                )}
-                {user.role === 'rider' && (
-                  <li><Link to="/delivery" onClick={() => setMobileMenuOpen(false)} className="nav-portal-btn">Rider Portal</Link></li>
-                )}
+                {[
+                  { role: 'super_admin', path: '/admin', label: 'Admin Portal' },
+                  { role: 'rider', path: '/delivery', label: 'Rider Portal' },
+                  { role: 'restaurant_owner', path: '/restaurant-owner', label: 'Restaurant Portal' }
+                ].map(portal => user.role === portal.role ? (
+                  <li key={portal.role}><Link to={portal.path} onClick={() => setMobileMenuOpen(false)} className="nav-portal-btn">{portal.label}</Link></li>
+                ) : null)}
                 <li><span className="welcome-text-span" style={{ marginRight: '10px', color: '#555' }}>Hi, {user.name}</span></li>
                 <li><button onClick={handleLogoutClick} className="logout-btn-nav-react">Logout</button></li>
               </>

@@ -15,6 +15,10 @@ const orderSchema = new mongoose.Schema({
     deliveryPartner: { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null },
     paymentMethod: { type: String, enum: ["Card", "UPI", "COD"], default: "COD" },
     paymentStatus: { type: String, enum: ["Pending", "Completed", "Failed"], default: "Pending" },
+    restaurantId: { type: String, default: "" },
+    restaurantName: { type: String, default: "" },
+    restaurantOwnerEmail: { type: String, default: "" },
+    restaurantOwnerName: { type: String, default: "" },
     
     // Logistics parameters
     distance: { type: Number, default: 0 }, // in km

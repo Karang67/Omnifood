@@ -16,6 +16,7 @@
     --shadow-md: 0 12px 28px rgba(0, 0, 0, 0.06);
     --shadow-lg: 0 20px 48px rgba(0, 0, 0, 0.1);
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --font-family: 'Inter', sans-serif;
 }
 
 :root[data-theme='dark'] {
@@ -55,7 +56,7 @@
 html {
     background-color: var(--bg-white);
     color: var(--text-medium);
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-family), sans-serif;
     font-size: 16px;
     font-weight: 400;
     text-rendering: optimizeLegibility;
@@ -209,6 +210,54 @@ nav .row {
     align-items: center;
     justify-content: space-between;
     width: 100%;
+}
+
+.toast-area {
+    position: fixed;
+    top: 88px;
+    right: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    pointer-events: none;
+}
+
+.toast-item {
+    min-width: 280px;
+    max-width: 360px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    color: #fff;
+    font-weight: 600;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.18);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    pointer-events: auto;
+}
+
+.toast-item.info {
+    background: #334155;
+}
+
+.toast-item.success {
+    background: #16a34a;
+}
+
+.toast-item.error {
+    background: #dc2626;
+}
+
+.toast-close {
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 1rem;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
 }
 
 .logo {

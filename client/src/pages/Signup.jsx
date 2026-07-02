@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useNotification } from '../context/NotificationContext';
 import '../styles/auth.css';
 
 const Signup = () => {
   const { signup, loginWithGoogle } = useAuth();
+  const { notify } = useNotification();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -13,20 +16,29 @@ const Signup = () => {
   const [address, setAddress] = useState('');
   const [role, setRole] = useState('customer');
   const [password, setPassword] = useState('');
-  const [alert, setAlert] = useState({ show: false, type: '', message: '' });
   const [loading, setLoading] = useState(false);
+  const isRestaurantOwner = role === 'restaurant_owner';
+
+  useEffect(() => {
+    const requestedRole = searchParams.get('role');
+    if (requestedRole === 'restaurant_owner') {
+      setRole('restaurant_owner');
+    }
+  }, [searchParams]);
+
+  const getRedirectPath = (role) => {
+    if (role === 'super_admin') return '/admin';
+    if (role === 'rider') return '/delivery';
+    if (role === 'restaurant_owner') return '/restaurant-owner';
+    return '/menu';
+  };
 
   const handleGoogleCallback = async (res) => {
-    setAlert({ show: false, type: '', message: '' });
     setLoading(true);
     try {
       const result = await loginWithGoogle(res.credential);
       if (result.success) {
-        setAlert({
-          show: true,
-          type: 'alert-success',
-          message: `${result.message} Redirecting...`
-        });
+        notify({ type: 'success', message: `${result.message} Redirecting...` });
         
         setTimeout(() => {
           if (result.user.role === 'super_admin') {
@@ -38,19 +50,11 @@ const Signup = () => {
           }
         }, 1500);
       } else {
-        setAlert({
-          show: true,
-          type: 'alert-error',
-          message: result.message || 'Google Auth failed.'
-        });
+        notify({ type: 'error', message: result.message || 'Google Auth failed.' });
       }
     } catch (err) {
       console.error(err);
-      setAlert({
-        show: true,
-        type: 'alert-error',
-        message: 'Google registration failed due to network error.'
-      });
+      notify({ type: 'error', message: 'Google registration failed due to network error.' });
     } finally {
       setLoading(false);
     }
@@ -89,7 +93,6 @@ const Signup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setAlert({ show: false, type: '', message: '' });
     setLoading(true);
 
     try {
@@ -103,39 +106,21 @@ const Signup = () => {
       });
 
       if (result.success) {
-        setAlert({
-          show: true,
-          type: 'alert-success',
-          message: `${result.message} Redirecting...`
-        });
+        notify({ type: 'success', message: `${result.message} Redirecting...` });
 
         setTimeout(() => {
           if (result.requiresVerification) {
             navigate(`/verify-email?email=${encodeURIComponent(result.email)}`);
           } else {
-            if (result.user.role === 'super_admin') {
-              navigate('/admin');
-            } else if (result.user.role === 'rider') {
-              navigate('/delivery');
-            } else {
-              navigate('/menu');
-            }
+            navigate(getRedirectPath(result.user.role));
           }
         }, 1500);
       } else {
-        setAlert({
-          show: true,
-          type: 'alert-error',
-          message: result.message || 'Registration failed.'
-        });
+        notify({ type: 'error', message: result.message || 'Registration failed.' });
       }
     } catch (err) {
       console.error(err);
-      setAlert({
-        show: true,
-        type: 'alert-error',
-        message: 'Network error. Please try again.'
-      });
+      notify({ type: 'error', message: 'Network error. Please try again.' });
     } finally {
       setLoading(false);
     }
@@ -146,14 +131,13 @@ const Signup = () => {
       <div className="signup-container">
         <div className="header-box">
           <div className="logo-text">Omnifood</div>
-          <div className="subtitle">Create an account to order fresh gourmet food</div>
+          <div className="subtitle">
+            {isRestaurantOwner
+              ? 'Restaurant owners can register to manage menus and orders.'
+              : 'Create an account to order fresh gourmet food'}
+          </div>
         </div>
 
-        {alert.show && (
-          <div className={`alert ${alert.type}`} style={{ display: 'block' }}>
-            {alert.message}
-          </div>
-        )}
 
         <form id="signupForm" onSubmit={handleSubmit}>
           <div className="form-group">
@@ -190,37 +174,41 @@ const Signup = () => {
             </div>
           </div>
 
-          <div className="form-group">
-            <label htmlFor="phone">Phone Number</label>
-            <div className="input-wrapper">
-              <i className="ion-ios-telephone-outline"></i>
-              <input 
-                type="tel" 
-                id="phone" 
-                className="form-control" 
-                placeholder="Enter your mobile number" 
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                disabled={loading}
-              />
-            </div>
-          </div>
+          {!isRestaurantOwner && (
+            <>
+              <div className="form-group">
+                <label htmlFor="phone">Phone Number</label>
+                <div className="input-wrapper">
+                  <i className="ion-ios-telephone-outline"></i>
+                  <input 
+                    type="tel" 
+                    id="phone" 
+                    className="form-control" 
+                    placeholder="Enter your mobile number" 
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    disabled={loading}
+                  />
+                </div>
+              </div>
 
-          <div className="form-group">
-            <label htmlFor="address">Delivery Address</label>
-            <div className="input-wrapper">
-              <i className="ion-ios-location-outline"></i>
-              <input 
-                type="text" 
-                id="address" 
-                className="form-control" 
-                placeholder="Enter your delivery address" 
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                disabled={loading}
-              />
-            </div>
-          </div>
+              <div className="form-group">
+                <label htmlFor="address">Delivery Address</label>
+                <div className="input-wrapper">
+                  <i className="ion-ios-location-outline"></i>
+                  <input 
+                    type="text" 
+                    id="address" 
+                    className="form-control" 
+                    placeholder="Enter your delivery address" 
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
+                    disabled={loading}
+                  />
+                </div>
+              </div>
+            </>
+          )}
 
           <div className="form-group">
             <label htmlFor="role">Register As</label>
@@ -235,9 +223,15 @@ const Signup = () => {
                 disabled={loading}
               >
                 <option value="customer">Customer (Order Food)</option>
-                <option value="rider">Rider (Deliver Food)</option>
+                <option value="rider">Rider (Delivery Partner)</option>
+                <option value="restaurant_owner">Restaurant Owner (Manage Restaurant)</option>
               </select>
             </div>
+            {isRestaurantOwner && (
+              <div style={{ color: '#cbd5e1', fontSize: '0.9rem', marginTop: '8px' }}>
+                Restaurant owners can sign up to manage menu items, orders, and restaurant settings.
+              </div>
+            )}
           </div>
 
           <div className="form-group">
@@ -258,7 +252,7 @@ const Signup = () => {
           </div>
 
           <button type="submit" className="btn-submit" disabled={loading}>
-            {loading ? 'Creating Account...' : 'Sign Up'}
+            {loading ? 'Creating Account...' : isRestaurantOwner ? 'Register as Restaurant Owner' : 'Sign Up'}
           </button>
         </form>
 

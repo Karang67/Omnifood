@@ -13,6 +13,8 @@ const AccessDenied = () => {
             navigate('/admin');
         } else if (user.role === 'rider') {
             navigate('/delivery');
+        } else if (user.role === 'restaurant_owner') {
+            navigate('/restaurant-owner');
         } else {
             navigate('/menu');
         }

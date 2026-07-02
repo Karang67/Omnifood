@@ -1,17 +1,25 @@
 import { useState, useEffect, useRef } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useNotification } from '../context/NotificationContext';
 import '../styles/auth.css';
 
 const VerifyEmail = () => {
   const { verifyOtp, resendOtp } = useAuth();
+  const { notify } = useNotification();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   
   const email = searchParams.get('email') || '';
+
+  const getRedirectPath = (role) => {
+    if (role === 'super_admin') return '/admin';
+    if (role === 'rider') return '/delivery';
+    if (role === 'restaurant_owner') return '/restaurant-owner';
+    return '/menu';
+  };
   
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
-  const [alert, setAlert] = useState({ show: false, type: '', message: '' });
   const [loading, setLoading] = useState(false);
   const [resendTimer, setResendTimer] = useState(60);
   const [canResend, setCanResend] = useState(false);
@@ -20,13 +28,9 @@ const VerifyEmail = () => {
 
   useEffect(() => {
     if (!email) {
-      setAlert({
-        show: true,
-        type: 'alert-error',
-        message: 'No email address provided for verification.'
-      });
+      notify({ type: 'error', message: 'No email address provided for verification.' });
     }
-  }, [email]);
+  }, [email, notify]);
 
   useEffect(() => {
     let interval = null;
@@ -72,45 +76,24 @@ const VerifyEmail = () => {
     e.preventDefault();
     const otpValue = otp.join('');
     if (otpValue.length !== 6) {
-      setAlert({ show: true, type: 'alert-error', message: 'Please enter a 6-digit code.' });
+      notify({ type: 'error', message: 'Please enter a 6-digit code.' });
       return;
     }
 
-    setAlert({ show: false, type: '', message: '' });
     setLoading(true);
 
     try {
       const result = await verifyOtp(email, otpValue);
       if (result.success) {
-        setAlert({
-          show: true,
-          type: 'alert-success',
-          message: `${result.message} Redirecting...`
-        });
+        notify({ type: 'success', message: `${result.message} Redirecting...` });
 
-        setTimeout(() => {
-          if (result.user.role === 'super_admin') {
-            navigate('/admin');
-          } else if (result.user.role === 'rider') {
-            navigate('/delivery');
-          } else {
-            navigate('/menu');
-          }
-        }, 1500);
+        setTimeout(() => navigate(getRedirectPath(result.user.role)), 1500);
       } else {
-        setAlert({
-          show: true,
-          type: 'alert-error',
-          message: result.message || 'Verification failed.'
-        });
+        notify({ type: 'error', message: result.message || 'Verification failed.' });
       }
     } catch (err) {
       console.error(err);
-      setAlert({
-        show: true,
-        type: 'alert-error',
-        message: 'Network error. Please try again.'
-      });
+      notify({ type: 'error', message: 'Network error. Please try again.' });
     } finally {
       setLoading(false);
     }
@@ -119,34 +102,21 @@ const VerifyEmail = () => {
   const handleResend = async () => {
     if (!canResend) return;
     setLoading(true);
-    setAlert({ show: false, type: '', message: '' });
     
     try {
       const result = await resendOtp(email);
       if (result.success) {
-        setAlert({
-          show: true,
-          type: 'alert-success',
-          message: 'A new verification code has been sent!'
-        });
+        notify({ type: 'success', message: 'A new verification code has been sent!' });
         setResendTimer(60);
         setCanResend(false);
         setOtp(['', '', '', '', '', '']);
         inputRefs.current[0].focus();
       } else {
-        setAlert({
-          show: true,
-          type: 'alert-error',
-          message: result.message || 'Failed to resend code.'
-        });
+        notify({ type: 'error', message: result.message || 'Failed to resend code.' });
       }
     } catch (err) {
       console.error(err);
-      setAlert({
-        show: true,
-        type: 'alert-error',
-        message: 'Network error. Please try again.'
-      });
+      notify({ type: 'error', message: 'Network error. Please try again.' });
     } finally {
       setLoading(false);
     }
@@ -159,12 +129,6 @@ const VerifyEmail = () => {
           <div className="logo-text">Omnifood</div>
           <div className="subtitle">Verify your email address</div>
         </div>
-
-        {alert.show && (
-          <div className={`alert ${alert.type}`} style={{ display: 'block' }}>
-            {alert.message}
-          </div>
-        )}
 
         <div className="email-hint" style={{ textAlign: 'center', marginBottom: '20px', color: '#94a3b8', fontSize: '0.9rem' }}>
           We sent a 6-digit verification code to <br />
@@ -232,7 +196,7 @@ const VerifyEmail = () => {
         </div>
 
         <div className="switch-link" style={{ textAlign: 'center', marginTop: '20px' }}>
-          Back to <a href="/signup-page" style={{ color: '#e23744', textDecoration: 'none', fontWeight: '600' }}>Sign Up</a>
+          Back to <a href="/signup" style={{ color: '#e23744', textDecoration: 'none', fontWeight: '600' }}>Sign Up</a>
         </div>
       </div>
     </div>

@@ -9,6 +9,8 @@ const RESTAURANTS = [
   {
     id: 'julies',
     name: "Julie's",
+    ownerEmail: 'owner_julies@omnifood.com',
+    ownerName: 'Julie Khan',
     tags: "Italian, Premium Pizzas, Fast Food, Salads",
     rating: 4.7,
     deliveryTime: "15 mins",
@@ -21,6 +23,8 @@ const RESTAURANTS = [
   {
     id: 'bigbowl',
     name: "Big Bowl",
+    ownerEmail: 'owner_bigbowl@omnifood.com',
+    ownerName: 'Sana Long',
     tags: "Korean Special Bowls, Organic Vegetables",
     rating: 4.1,
     deliveryTime: "22 mins",
@@ -33,6 +37,8 @@ const RESTAURANTS = [
   {
     id: 'mcdonalds',
     name: "McDonald's",
+    ownerEmail: 'owner_mcdonalds@omnifood.com',
+    ownerName: 'Riya Singh',
     tags: "Burgers, Starter Meals, American",
     rating: 4.3,
     deliveryTime: "18 mins",
@@ -45,6 +51,8 @@ const RESTAURANTS = [
   {
     id: 'rukas',
     name: "Rukas",
+    ownerEmail: 'owner_rukas@omnifood.com',
+    ownerName: 'Anil Verma',
     tags: "Healthy Organic Bowls, Fresh Green Salads",
     rating: 4.5,
     deliveryTime: "25 mins",
@@ -57,6 +65,8 @@ const RESTAURANTS = [
   {
     id: 'gurukirpa',
     name: "Gurukirpa Veg Chaap",
+    ownerEmail: 'owner_gurukirpa@omnifood.com',
+    ownerName: 'Meera Patel',
     tags: "Indian Organic Soups, Starters",
     rating: 4.0,
     deliveryTime: "28 mins",
@@ -69,6 +79,8 @@ const RESTAURANTS = [
   {
     id: 'behrouz',
     name: "Behrouz Biryani",
+    ownerEmail: 'owner_behrouz@omnifood.com',
+    ownerName: 'Aman Kapoor',
     tags: "Premium Steaks, Rice, Gourmet Diners",
     rating: 4.2,
     deliveryTime: "20 mins",
@@ -140,6 +152,9 @@ const MenuPage = () => {
   const [upiTimer, setUpiTimer] = useState(120); // 2 minutes
   const [loaderStatus, setLoaderStatus] = useState('Initializing secure checkout...');
   const [loaderSub, setLoaderSub] = useState('Securing transmission tunnel');
+  const [restaurantSelectError, setRestaurantSelectError] = useState('');
+  const upiEnabled = config?.payment?.upiEnabled !== false;
+  const codEnabled = config?.payment?.codEnabled !== false;
 
   // card input formatters
   const handleCardNumberChange = (e) => {
@@ -162,6 +177,15 @@ const MenuPage = () => {
     let value = e.target.value.replace(/\D/g, '');
     if (value.length > 3) value = value.slice(0, 3);
     setCardDetails(prev => ({ ...prev, cvv: value }));
+  };
+
+  const handleCheckoutOpen = () => {
+    if (!activeRest) {
+      setRestaurantSelectError('Please select a restaurant before proceeding to checkout.');
+      return;
+    }
+    setRestaurantSelectError('');
+    setCheckoutModalOpen(true);
   };
 
   const handleNextStep = (e) => {
@@ -187,13 +211,26 @@ const MenuPage = () => {
     }
 
     try {
+      const restaurantPayload = activeRest ? {
+        restaurantId: activeRest.id,
+        restaurantName: activeRest.name,
+        restaurantOwnerEmail: activeRest.ownerEmail,
+        restaurantOwnerName: activeRest.ownerName,
+      } : {
+        restaurantId: '',
+        restaurantName: 'Omnifood Marketplace',
+        restaurantOwnerEmail: '',
+        restaurantOwnerName: '',
+      };
+
       const result = await checkout({
         customerName: checkoutForm.name,
         email: checkoutForm.email,
         phone: checkoutForm.phone,
         address: checkoutForm.address,
         paymentMethod: paymentMethod,
-        paymentStatus: paymentMethod === 'COD' ? 'Pending' : 'Completed'
+        paymentStatus: paymentMethod === 'COD' ? 'Pending' : 'Completed',
+        ...restaurantPayload,
       });
 
       if (result.success) {
@@ -203,7 +240,8 @@ const MenuPage = () => {
         setCartDrawerOpen(false);
         // Reset steps
         setCheckoutStep(1);
-        navigate(`/track/${result.orderId}`);
+        const query = `?email=${encodeURIComponent(checkoutForm.email)}&phone=${encodeURIComponent(checkoutForm.phone)}`;
+        navigate(`/track/${result.orderId}${query}`);
       } else {
         setCheckoutStep(2); // Go back to payment selection
         alert(result.message || 'Payment failed. Please check details.');
@@ -232,6 +270,16 @@ const MenuPage = () => {
     }
     return () => clearInterval(interval);
   }, [checkoutStep, paymentMethod]);
+
+  useEffect(() => {
+    if (!config) return;
+    if (paymentMethod === 'UPI' && !upiEnabled) {
+      setPaymentMethod('Card');
+    }
+    if (paymentMethod === 'COD' && !codEnabled) {
+      setPaymentMethod('Card');
+    }
+  }, [config, paymentMethod, upiEnabled, codEnabled]);
 
   // Countdowns
   const [countdownText, setCountdownText] = useState('14:59 mins left');
@@ -989,11 +1037,16 @@ const MenuPage = () => {
                   <span>Grand Total</span>
                   <span id="totalVal">${subtotal.toFixed(2)}</span>
                 </div>
+                {restaurantSelectError && (
+                  <div style={{ marginBottom: '10px', color: '#e23744', fontWeight: 600, fontSize: '0.95rem' }}>
+                    {restaurantSelectError}
+                  </div>
+                )}
                 <button className="btn-cart-checkout" onClick={() => {
                    if (config?.website?.disableCheckoutPage) {
                      alert("Online checkout is temporarily offline. We are preparing orders via phone/COD only.");
                    } else {
-                     setCheckoutModalOpen(true);
+                     handleCheckoutOpen();
                    }
                  }}>Proceed to Order</button>
               </div>
@@ -1104,22 +1157,26 @@ const MenuPage = () => {
                     <i className="ion-card"></i>
                     <span>Card</span>
                   </button>
-                  <button 
-                    type="button" 
-                    className={`payment-tab-btn ${paymentMethod === 'UPI' ? 'active' : ''}`}
-                    onClick={() => setPaymentMethod('UPI')}
-                  >
-                    <i className="ion-iphone"></i>
-                    <span>UPI / Scan</span>
-                  </button>
-                  <button 
-                    type="button" 
-                    className={`payment-tab-btn ${paymentMethod === 'COD' ? 'active' : ''}`}
-                    onClick={() => setPaymentMethod('COD')}
-                  >
-                    <i className="ion-cash"></i>
-                    <span>Cash / COD</span>
-                  </button>
+                  {upiEnabled && (
+                    <button 
+                      type="button" 
+                      className={`payment-tab-btn ${paymentMethod === 'UPI' ? 'active' : ''}`}
+                      onClick={() => setPaymentMethod('UPI')}
+                    >
+                      <i className="ion-iphone"></i>
+                      <span>UPI / Scan</span>
+                    </button>
+                  )}
+                  {codEnabled && (
+                    <button 
+                      type="button" 
+                      className={`payment-tab-btn ${paymentMethod === 'COD' ? 'active' : ''}`}
+                      onClick={() => setPaymentMethod('COD')}
+                    >
+                      <i className="ion-cash"></i>
+                      <span>Cash / COD</span>
+                    </button>
+                  )}
                 </div>
 
                 {/* Sub-panels for payment options */}

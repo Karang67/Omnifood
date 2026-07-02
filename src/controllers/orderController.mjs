@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import jwt from "jsonwebtoken";
 import Order from "../models/Order.mjs";
 import User from "../models/User.mjs";
 import Contact from "../models/Contact.mjs";
@@ -26,9 +27,65 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
     return parseFloat(d.toFixed(2));
 }
 
+async function getApprovedRider(partnerId) {
+    if (!mongoose.Types.ObjectId.isValid(partnerId)) return null;
+    const rider = await User.findById(partnerId);
+    if (!rider || rider.role !== 'rider') return null;
+    if (rider.onboardingStatus !== 'Approved') return null;
+    return rider;
+}
+
+function riderOwnsPartner(req, partnerId) {
+    if (!req.user) return false;
+    return req.user.role === 'super_admin' || req.user.id?.toString() === partnerId?.toString();
+}
+
+function estimateTrackingInfo(order, partner) {
+    const tracking = {
+        etaMinutes: 0,
+        distanceToCustomer: order.distance,
+        driverSpeed: partner?.speed || 0,
+        routeStatus: order.status,
+    };
+
+    if (partner && partner.lat != null && partner.lng != null) {
+        tracking.distanceToCustomer = calculateDistance(
+            partner.lat,
+            partner.lng,
+            order.coords.customerLat,
+            order.coords.customerLng
+        );
+    }
+
+    if (order.status === "Delivered") {
+        tracking.etaMinutes = 0;
+    } else if (order.status === "Out for Delivery" && tracking.driverSpeed > 5) {
+        tracking.etaMinutes = Math.max(3, Math.ceil((tracking.distanceToCustomer / tracking.driverSpeed) * 60));
+    } else if (order.status === "Preparing") {
+        tracking.etaMinutes = Math.max(8, Math.ceil(order.distance * 4));
+    } else {
+        tracking.etaMinutes = Math.max(12, Math.ceil(order.distance * 4));
+    }
+
+    return tracking;
+}
+
 // 1. CUSTOMER: Place Order with Logistics Geolocation & Dynamic Payout
 export async function placeOrder(req, res) {
-    const { customerName, email, phone, address, items, totalAmount, paymentMethod, paymentStatus } = req.body;
+    const {
+        customerName,
+        email,
+        phone,
+        address,
+        items,
+        totalAmount,
+        paymentMethod,
+        paymentStatus,
+        restaurantId,
+        restaurantName,
+        restaurantOwnerEmail,
+        restaurantOwnerName
+    } = req.body;
     if (!customerName || !email || !phone || !address || !items || !totalAmount) {
         return res.status(400).json({ success: false, message: "All order details are required." });
     }
@@ -70,6 +127,10 @@ export async function placeOrder(req, res) {
             deliveryPayout,
             surgeMultiplier,
             tipAmount,
+            restaurantId: restaurantId || "",
+            restaurantName: restaurantName || "Omnifood",
+            restaurantOwnerEmail: restaurantOwnerEmail || "",
+            restaurantOwnerName: restaurantOwnerName || "",
             coords: {
                 shopLat,
                 shopLng,
@@ -83,7 +144,7 @@ export async function placeOrder(req, res) {
         // If Auto-Assignment dispatch algorithm is enabled, search for nearest driver
         if (autoAssignmentEnabled) {
             const availableRider = await User.findOne({
-                role: "delivery",
+                role: "rider",
                 isOnline: true,
                 onboardingStatus: "Approved"
             });
@@ -116,7 +177,43 @@ export async function getOrderById(req, res) {
     try {
         const order = await Order.findById(req.params.orderId).populate("deliveryPartner", "name email phone lat lng speed");
         if (!order) return res.status(404).json({ success: false, message: "Order not found." });
-        res.json(order);
+
+        if (!req.user) {
+            const token = req.cookies?.token;
+            if (token) {
+                try {
+                    req.user = jwt.verify(token, process.env.JWT_SECRET || "super_secret_omnifood_key_12345");
+                } catch (err) {
+                    req.user = null;
+                }
+            }
+        }
+
+        const userEmail = req.user?.email?.toLowerCase();
+        const userId = req.user?.id?.toString();
+        const userRole = req.user?.role;
+        const ownerEmail = order.email?.toLowerCase();
+        const restaurantOwnerEmail = order.restaurantOwnerEmail?.toLowerCase();
+        const deliveryPartnerId = order.deliveryPartner?._id?.toString();
+
+        const allowed =
+            userRole === "super_admin" ||
+            userEmail === ownerEmail ||
+            userEmail === restaurantOwnerEmail ||
+            (userRole === "rider" && userId === deliveryPartnerId);
+
+        const guestEmail = req.query.email?.toLowerCase();
+        const guestPhone = req.query.phone?.toString();
+        const guestAllowed = !req.user && guestEmail && guestPhone && guestEmail === ownerEmail && guestPhone === order.phone;
+
+        if (!allowed && !guestAllowed) {
+            return res.status(403).json({ success: false, message: "Access denied. You are not authorized to view this order." });
+        }
+
+        const orderObject = order.toObject();
+        orderObject.trackingInfo = estimateTrackingInfo(orderObject, orderObject.deliveryPartner);
+
+        res.json(orderObject);
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
@@ -135,7 +232,7 @@ export async function getAdminOrders(req, res) {
 // 4. ADMIN: Get Delivery Partners with Full Onboarding Status
 export async function getDeliveryPartners(req, res) {
     try {
-        const partners = await User.find({ role: "delivery" }, "name email phone isOnline onboardingStatus license vehicle bankDetails walletBase walletTips walletIncentives lat lng speed");
+        const partners = await User.find({ role: "rider" }, "name email phone isOnline onboardingStatus license vehicle bankDetails walletBase walletTips walletIncentives lat lng speed");
         res.json(partners);
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
@@ -152,6 +249,17 @@ export async function assignDeliveryPartner(req, res) {
         const order = await Order.findById(orderId);
         if (!order) return res.status(404).json({ success: false, message: "Order not found." });
         
+        if (req.user && req.user.role === "restaurant_owner") {
+            if (order.restaurantOwnerEmail !== req.user.email && order.restaurantOwnerName !== req.user.name) {
+                return res.status(403).json({ success: false, message: "You do not have permission to assign riders for this order." });
+            }
+        }
+
+        const approvedRider = await getApprovedRider(partnerId);
+        if (!approvedRider) {
+            return res.status(400).json({ success: false, message: "Selected delivery partner is not available or approved for assignment." });
+        }
+        
         order.deliveryPartner = partnerId;
         order.status = "Preparing";
         await order.save();
@@ -164,7 +272,52 @@ export async function assignDeliveryPartner(req, res) {
     }
 }
 
-// 6. RIDER: Get Assigned Tasks
+// 6. RESTAURANT OWNER: Fetch orders for the current restaurant owner
+export async function getRestaurantOrders(req, res) {
+    try {
+        const ownerEmail = req.user?.email;
+        const ownerName = req.user?.name;
+        const orders = await Order.find({
+            $or: [
+                { restaurantOwnerEmail: ownerEmail },
+                { restaurantOwnerName: ownerName }
+            ]
+        }).sort({ date: -1 });
+        res.json(orders);
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+}
+
+// 7. RESTAURANT OWNER: Accept incoming order and move it into Preparation
+export async function acceptRestaurantOrder(req, res) {
+    const { orderId } = req.body;
+    if (!mongoose.Types.ObjectId.isValid(orderId)) {
+        return res.status(400).json({ success: false, message: "Invalid order ID format." });
+    }
+
+    try {
+        const order = await Order.findById(orderId);
+        if (!order) return res.status(404).json({ success: false, message: "Order not found." });
+
+        if (order.restaurantOwnerEmail !== req.user.email && order.restaurantOwnerName !== req.user.name) {
+            return res.status(403).json({ success: false, message: "You do not have permission to accept this order." });
+        }
+
+        if (order.status !== "Placed") {
+            return res.status(400).json({ success: false, message: "Only newly placed orders can be accepted." });
+        }
+
+        order.status = "Preparing";
+        await order.save();
+
+        res.json({ success: true, message: "Order accepted and moved to preparation.", order });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+}
+
+// 8. RIDER: Get Assigned Tasks
 export async function getPartnerOrders(req, res) {
     if (!mongoose.Types.ObjectId.isValid(req.params.partnerId)) {
         return res.status(400).json({ success: false, message: "Invalid partner ID format." });
@@ -176,14 +329,20 @@ export async function getPartnerOrders(req, res) {
         res.status(500).json({ success: false, message: error.message });
     }
 }
-
-// 7. RIDER: Accept Order Pop-up Alert
 export async function acceptRiderOrder(req, res) {
     const { orderId, partnerId } = req.body;
     if (!mongoose.Types.ObjectId.isValid(orderId) || !mongoose.Types.ObjectId.isValid(partnerId)) {
         return res.status(400).json({ success: false, message: "Invalid ID format." });
     }
+    if (!riderOwnsPartner(req, partnerId)) {
+        return res.status(403).json({ success: false, message: "Access denied. You may only accept orders for your own rider account." });
+    }
     try {
+        const approvedRider = await getApprovedRider(partnerId);
+        if (!approvedRider) {
+            return res.status(403).json({ success: false, message: "Delivery partner must be approved before accepting orders." });
+        }
+
         const order = await Order.findById(orderId);
         if (!order) return res.status(404).json({ success: false, message: "Order not found." });
         
@@ -200,7 +359,19 @@ export async function acceptRiderOrder(req, res) {
 
 // 8. RIDER: Reject Order Pop-up (Simulates Fleet rejection analytics)
 export async function rejectRiderOrder(req, res) {
+    const { partnerId } = req.body;
+    if (!mongoose.Types.ObjectId.isValid(partnerId)) {
+        return res.status(400).json({ success: false, message: "Invalid partner ID format." });
+    }
+    if (!riderOwnsPartner(req, partnerId)) {
+        return res.status(403).json({ success: false, message: "Access denied. You may only reject orders for your own rider account." });
+    }
     try {
+        const approvedRider = await getApprovedRider(partnerId);
+        if (!approvedRider) {
+            return res.status(403).json({ success: false, message: "Delivery partner must be approved before rejecting orders." });
+        }
+
         globalRejectedCount++;
         res.json({ success: true, message: "Order rejected. Recalculating fleet routing." });
     } catch (error) {
@@ -217,7 +388,17 @@ export async function updateOrderStatus(req, res) {
     try {
         const order = await Order.findById(orderId);
         if (!order) return res.status(404).json({ success: false, message: "Order not found." });
-        
+
+        if (req.user.role === 'rider') {
+            if (!order.deliveryPartner || order.deliveryPartner.toString() !== req.user.id) {
+                return res.status(403).json({ success: false, message: "Access denied. You can only update status for your assigned orders." });
+            }
+            const approvedRider = await getApprovedRider(req.user.id);
+            if (!approvedRider) {
+                return res.status(403).json({ success: false, message: "Delivery partner must be approved before updating order status." });
+            }
+        }
+
         order.status = status;
         await order.save();
         
@@ -284,7 +465,18 @@ export async function toggleRiderAvailability(req, res) {
 // 12. RIDER: Update GPS Location coords & speed
 export async function updateRiderLocation(req, res) {
     const { partnerId, lat, lng, speed } = req.body;
+    if (!mongoose.Types.ObjectId.isValid(partnerId)) {
+        return res.status(400).json({ success: false, message: "Invalid partner ID format." });
+    }
+    if (!riderOwnsPartner(req, partnerId)) {
+        return res.status(403).json({ success: false, message: "Access denied. You may only update your own location." });
+    }
     try {
+        const approvedRider = await getApprovedRider(partnerId);
+        if (!approvedRider) {
+            return res.status(403).json({ success: false, message: "Delivery partner must be approved before posting live location." });
+        }
+
         const rider = await User.findById(partnerId);
         if (!rider) return res.status(404).json({ success: false, message: "Rider not found." });
         
@@ -302,7 +494,18 @@ export async function updateRiderLocation(req, res) {
 // 13. RIDER: Cash Out Wallets
 export async function cashOutWallet(req, res) {
     const { partnerId } = req.body;
+    if (!mongoose.Types.ObjectId.isValid(partnerId)) {
+        return res.status(400).json({ success: false, message: "Invalid partner ID format." });
+    }
+    if (!riderOwnsPartner(req, partnerId)) {
+        return res.status(403).json({ success: false, message: "Access denied. You may only cash out your own wallet." });
+    }
     try {
+        const approvedRider = await getApprovedRider(partnerId);
+        if (!approvedRider) {
+            return res.status(403).json({ success: false, message: "Delivery partner must be approved before cashing out." });
+        }
+
         const rider = await User.findById(partnerId);
         if (!rider) return res.status(404).json({ success: false, message: "Rider not found." });
         
@@ -534,7 +737,16 @@ export async function submitLegacyContact(req, res) {
 // 23. CUSTOMER: Fetch orders placed by this customer (email match)
 export async function getCustomerOrders(req, res) {
     try {
-        const orders = await Order.find({ email: req.params.email }).sort({ date: -1 });
+        const customerEmail = req.params.email?.toLowerCase();
+        if (!customerEmail) {
+            return res.status(400).json({ success: false, message: "Customer email is required." });
+        }
+
+        if (req.user.role !== "super_admin" && req.user.email.toLowerCase() !== customerEmail) {
+            return res.status(403).json({ success: false, message: "Access denied. You may only view your own orders." });
+        }
+
+        const orders = await Order.find({ email: customerEmail }).sort({ date: -1 });
         res.json(orders);
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });

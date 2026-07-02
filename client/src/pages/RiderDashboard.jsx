@@ -261,7 +261,7 @@ const RiderDashboard = () => {
     navigate('/login');
   };
 
-  if (!user || user.role !== 'delivery') return null;
+  if (!user || user.role !== 'rider') return null;
 
   // Onboarding compliance dashboard fallback check
   const showOnboarding = !riderDetails || riderDetails.onboardingStatus !== 'Approved';

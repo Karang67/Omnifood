@@ -176,10 +176,17 @@ async function seedSuperAdmin() {
     try {
         const adminCount = await User.countDocuments({ role: "super_admin" });
         if (adminCount === 0) {
-            const hashedPassword = await bcrypt.hash("admin123", 10);
+            if (process.env.NODE_ENV === "production") {
+                console.warn("No super_admin account found. In production, create an admin account manually instead of seeding a default account.");
+                return;
+            }
+
+            const adminEmail = process.env.DEFAULT_ADMIN_EMAIL || "admin@omnifood.com";
+            const adminPassword = process.env.DEFAULT_ADMIN_PASSWORD || "admin123";
+            const hashedPassword = await bcrypt.hash(adminPassword, 10);
             const defaultAdmin = new User({
                 name: "Super Admin",
-                email: "admin@omnifood.com",
+                email: adminEmail,
                 password: hashedPassword,
                 role: "super_admin",
                 phone: "1234567890",
@@ -188,8 +195,8 @@ async function seedSuperAdmin() {
             await defaultAdmin.save();
             console.log("=========================================");
             console.log("Default Super Admin seeded successfully!");
-            console.log("Email: admin@omnifood.com");
-            console.log("Password: admin123");
+            console.log(`Email: ${adminEmail}`);
+            console.log(`Password: ${adminPassword}`);
             console.log("=========================================");
         }
     } catch (error) {

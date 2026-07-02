@@ -1,52 +1,49 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useNotification } from '../context/NotificationContext';
 import '../styles/auth.css';
 
 const Login = () => {
   const { login, loginWithGoogle } = useAuth();
+  const { notify } = useNotification();
   const navigate = useNavigate();
   
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [alert, setAlert] = useState({ show: false, type: '', message: '' });
   const [loading, setLoading] = useState(false);
 
+  const getRedirectPath = (role) => {
+    if (role === 'super_admin') return '/admin';
+    if (role === 'rider') return '/delivery';
+    if (role === 'restaurant_owner') return '/restaurant-owner';
+    return '/menu';
+  };
+
   const handleGoogleCallback = async (res) => {
-    setAlert({ show: false, type: '', message: '' });
     setLoading(true);
     try {
       const result = await loginWithGoogle(res.credential);
       if (result.success) {
-        setAlert({
-          show: true,
-          type: 'alert-success',
-          message: `${result.message} Redirecting...`
-        });
+        notify({ type: 'success', message: `${result.message} Redirecting...` });
         
         setTimeout(() => {
           if (result.user.role === 'super_admin') {
             navigate('/admin');
           } else if (result.user.role === 'rider') {
             navigate('/delivery');
+          } else if (result.user.role === 'restaurant_owner') {
+            navigate('/restaurant-owner');
           } else {
             navigate('/menu');
           }
         }, 1500);
       } else {
-        setAlert({
-          show: true,
-          type: 'alert-error',
-          message: result.message || 'Google Auth failed.'
-        });
+        notify({ type: 'error', message: result.message || 'Google Auth failed.' });
       }
     } catch (err) {
       console.error(err);
-      setAlert({
-        show: true,
-        type: 'alert-error',
-        message: 'Google login failed due to network error.'
-      });
+      notify({ type: 'error', message: 'Google login failed due to network error.' });
     } finally {
       setLoading(false);
     }
@@ -85,42 +82,31 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setAlert({ show: false, type: '', message: '' });
     setLoading(true);
 
     try {
       const result = await login(email.trim(), password);
       
       if (result.success) {
-        setAlert({
-          show: true,
-          type: 'alert-success',
-          message: `${result.message} Redirecting...`
-        });
+        notify({ type: 'success', message: `${result.message} Redirecting...` });
         
         setTimeout(() => {
           if (result.user.role === 'super_admin') {
             navigate('/admin');
           } else if (result.user.role === 'rider') {
             navigate('/delivery');
+          } else if (result.user.role === 'restaurant_owner') {
+            navigate('/restaurant-owner');
           } else {
             navigate('/menu');
           }
         }, 1500);
       } else {
-        setAlert({
-          show: true,
-          type: 'alert-error',
-          message: result.message || 'Invalid email or password.'
-        });
+        notify({ type: 'error', message: result.message || 'Invalid email or password.' });
       }
     } catch (err) {
       console.error(err);
-      setAlert({
-        show: true,
-        type: 'alert-error',
-        message: 'Network error. Please try again.'
-      });
+      notify({ type: 'error', message: 'Network error. Please try again.' });
     } finally {
       setLoading(false);
     }
@@ -134,11 +120,6 @@ const Login = () => {
           <div className="subtitle">Log in to your account to get healthy meals</div>
         </div>
 
-        {alert.show && (
-          <div className={`alert ${alert.type}`} style={{ display: 'block' }}>
-            {alert.message}
-          </div>
-        )}
 
         <form id="loginForm" onSubmit={handleSubmit}>
           <div className="form-group">
