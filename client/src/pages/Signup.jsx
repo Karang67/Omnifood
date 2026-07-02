@@ -17,6 +17,7 @@ const Signup = () => {
   const [role, setRole] = useState('customer');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [googleInitialized, setGoogleInitialized] = useState(false);
   const isRestaurantOwner = role === 'restaurant_owner';
 
   useEffect(() => {
@@ -62,15 +63,16 @@ const Signup = () => {
 
   useEffect(() => {
     const initializeGoogleBtn = () => {
-      if (window.google) {
+      if (window.google && !googleInitialized) {
         window.google.accounts.id.initialize({
           client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID || "143055305678-gr960v9o6tnd5ef44f8bc8h0pgo8naij.apps.googleusercontent.com",
           callback: handleGoogleCallback,
         });
         window.google.accounts.id.renderButton(
           document.getElementById("googleBtn"),
-          { theme: "outline", size: "large", width: "100%", text: "signup_with" }
+          { theme: "outline", size: "large", width: 300, text: "signup_with" }
         );
+        setGoogleInitialized(true);
       }
     };
 
@@ -89,7 +91,7 @@ const Signup = () => {
       }, 100);
       return () => clearInterval(interval);
     }
-  }, []);
+  }, [googleInitialized]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
