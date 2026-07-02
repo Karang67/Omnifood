@@ -107,6 +107,16 @@ app.use(express.json({ limit: "10mb" }));
 app.use('/static', express.static(path.join(__dirname, 'static')));
 app.use(express.static(path.join(__dirname, 'client/dist')));
 
+// Debug endpoint for deployment verification
+app.get('/debug/version', (req, res) => {
+    res.json({
+        status: 'ok',
+        nodeEnv: process.env.NODE_ENV || 'undefined',
+        deploymentCommit: '9e23560',
+        emailTransportFamily: 4
+    });
+});
+
 // Mount MVC Routers
 app.use("/api/auth", authRoutes); // Authentication APIs
 app.use("/", apiRoutes);          // Main Order and Admin APIs
