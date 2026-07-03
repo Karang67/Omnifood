@@ -89,7 +89,8 @@ export async function signup(req, res) {
             success: true,
             requiresVerification: true,
             message: "Verification code sent to your email!",
-            email: email.toLowerCase()
+            email: email.toLowerCase(),
+            ...(process.env.NODE_ENV !== "production" && { devOtp: otp })
         });
     } catch (error) {
         console.error("Signup error:", error.message);
@@ -162,7 +163,11 @@ export async function resendOtp(req, res) {
 
         await sendOtpEmail(pending.email, pending.name, otp);
 
-        res.json({ success: true, message: "A new verification code has been sent to your email." });
+        res.json({ 
+            success: true, 
+            message: "A new verification code has been sent to your email.",
+            ...(process.env.NODE_ENV !== "production" && { devOtp: otp })
+        });
     } catch (error) {
         console.error("Resend OTP error:", error.message);
         res.status(500).json({ success: false, message: "Something went wrong. Please try again." });

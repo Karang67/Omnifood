@@ -23,12 +23,18 @@ const VerifyEmail = () => {
   const [loading, setLoading] = useState(false);
   const [resendTimer, setResendTimer] = useState(60);
   const [canResend, setCanResend] = useState(false);
+  const [devOtpCode, setDevOtpCode] = useState(null);
   
   const inputRefs = useRef([]);
 
   useEffect(() => {
     if (!email) {
       notify({ type: 'error', message: 'No email address provided for verification.' });
+    } else {
+      const code = sessionStorage.getItem(`devOtp_${email.toLowerCase()}`);
+      if (code) {
+        setDevOtpCode(code);
+      }
     }
   }, [email, notify]);
 
@@ -107,6 +113,15 @@ const VerifyEmail = () => {
       const result = await resendOtp(email);
       if (result.success) {
         notify({ type: 'success', message: 'A new verification code has been sent!' });
+        
+        if (result.devOtp) {
+          sessionStorage.setItem(`devOtp_${email.toLowerCase()}`, result.devOtp);
+          setDevOtpCode(result.devOtp);
+        } else {
+          sessionStorage.removeItem(`devOtp_${email.toLowerCase()}`);
+          setDevOtpCode(null);
+        }
+
         setResendTimer(60);
         setCanResend(false);
         setOtp(['', '', '', '', '', '']);
@@ -134,6 +149,23 @@ const VerifyEmail = () => {
           We sent a 6-digit verification code to <br />
           <strong style={{ color: '#fff' }}>{email}</strong>
         </div>
+
+        {devOtpCode && (
+          <div style={{
+            background: 'rgba(230, 126, 34, 0.15)',
+            border: '1px dashed #e67e22',
+            borderRadius: '8px',
+            padding: '12px',
+            marginBottom: '20px',
+            textAlign: 'center',
+            color: '#ff9f43',
+            fontSize: '0.9rem',
+            lineHeight: '1.4'
+          }}>
+            <strong>Development Mode Bypass:</strong><br />
+            Your verification code is <strong>{devOtpCode}</strong>
+          </div>
+        )}
 
         <form id="verifyForm" onSubmit={handleSubmit}>
           <div className="otp-row" style={{ display: 'flex', gap: '8px', justifyContent: 'center', marginBottom: '24px' }}>

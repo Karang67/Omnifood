@@ -109,6 +109,10 @@ const Signup = () => {
 
       if (result.success) {
         notify({ type: 'success', message: `${result.message} Redirecting...` });
+        
+        if (result.devOtp) {
+          sessionStorage.setItem(`devOtp_${result.email.toLowerCase()}`, result.devOtp);
+        }
 
         setTimeout(() => {
           if (result.requiresVerification) {
