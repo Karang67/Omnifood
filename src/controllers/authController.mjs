@@ -37,6 +37,13 @@ async function isEmailDomainValid(email) {
         return mxRecords && mxRecords.length > 0;
     } catch (error) {
         console.warn(`MX lookup failed for ${domain}:`, error.message);
+        
+        // In development mode, allow the domain if lookup fails (e.g. offline, blocked Google DNS)
+        if (process.env.NODE_ENV !== "production") {
+            console.log(`[DEVELOPMENT BYPASS] Allowing domain ${domain} despite MX lookup failure.`);
+            return true;
+        }
+        
         return false;
     }
 }

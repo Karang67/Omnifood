@@ -92,9 +92,24 @@ export async function sendOtpEmail(email, name, otp) {
     };
 
     try {
+        if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+            throw new Error("SMTP credentials (EMAIL_USER/EMAIL_PASS) are not configured in .env");
+        }
         await getTransporter().sendMail(mailOptions);
+        console.log(`Verification OTP email successfully sent to ${email}`);
     } catch (error) {
-        console.error("sendOtpEmail error:", error);
+        console.error("sendOtpEmail SMTP transport failed:", error.message);
+        
+        // In development mode, fall back to console logging so local developers can sign up without real email credentials
+        if (process.env.NODE_ENV !== "production") {
+            console.log("\n========================================================");
+            console.log(`[DEVELOPMENT BYPASS] Email delivery failed or skipped.`);
+            console.log(`Recipient: ${email}`);
+            console.log(`Verification OTP Code: ${otp}`);
+            console.log("========================================================\n");
+            return;
+        }
+        
         throw error;
     }
 }
